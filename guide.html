@@ -8,6 +8,23 @@
 <meta http-equiv="Expires" content="0">
 <title>使用指南 — Studio A 訂購需求系統</title>
 <style>
+/* 密碼鎖 */
+#lock-overlay { position: fixed; inset: 0; background: #1d1d1f; display: flex; align-items: center; justify-content: center; z-index: 9999; }
+.lock-box { background: #2c2c2e; border-radius: 18px; padding: 36px 32px; width: 320px; text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,.5); }
+.lock-box .lock-icon { font-size: 40px; margin-bottom: 16px; }
+.lock-box h2 { color: #fff; font-size: 18px; font-weight: 700; margin-bottom: 6px; }
+.lock-box p { color: #8e8e93; font-size: 13px; margin-bottom: 24px; }
+.lock-box input { width: 100%; padding: 12px 16px; border-radius: 10px; border: 1.5px solid #3a3a3c; background: #1c1c1e; color: #fff; font-size: 18px; text-align: center; letter-spacing: 6px; outline: none; transition: border-color .2s; }
+.lock-box input:focus { border-color: #0071e3; }
+.lock-box input.shake { animation: shake .3s; border-color: #ff3b30; }
+.lock-box .hint { font-size: 12px; color: #ff3b30; margin-top: 8px; min-height: 18px; }
+@keyframes shake {
+  0%,100% { transform: translateX(0); }
+  25% { transform: translateX(-8px); }
+  75% { transform: translateX(8px); }
+}
+</style>
+<style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { font-family: -apple-system, sans-serif; background: #f5f5f7; color: #1d1d1f; font-size: 14px; line-height: 1.7; }
 
@@ -90,6 +107,20 @@ code { background: #f5f5f7; border-radius: 5px; padding: 2px 7px; font-family: '
 </style>
 </head>
 <body>
+
+<!-- 密碼鎖 -->
+<div id="lock-overlay">
+  <div class="lock-box">
+    <div class="lock-icon">🔒</div>
+    <h2>需要密碼</h2>
+    <p>此頁面僅限授權人員閱讀</p>
+    <input type="password" id="pwd-input" placeholder="請輸入密碼"
+           maxlength="20" autofocus
+           oninput="checkPwd(this)"
+           onkeydown="if(event.key==='Enter')checkPwd(this)">
+    <div class="hint" id="pwd-hint"></div>
+  </div>
+</div>
 
 <div class="header">
   <div class="header-left">
@@ -560,5 +591,29 @@ cat /tmp/order_tracker_scan.log</div>
   </div>
 
 </div>
+<script>
+(function() {
+  const PWD = '1532';
+  const KEY = 'guide_auth';
+  // 已解鎖過（本次 session）直接顯示
+  if (sessionStorage.getItem(KEY) === 'ok') {
+    document.getElementById('lock-overlay').style.display = 'none';
+  }
+})();
+
+function checkPwd(input) {
+  if (input.value === '1532') {
+    sessionStorage.setItem('guide_auth', 'ok');
+    document.getElementById('lock-overlay').style.display = 'none';
+  } else if (input.value.length >= 4) {
+    input.classList.add('shake');
+    document.getElementById('pwd-hint').textContent = '密碼錯誤，請再試一次';
+    setTimeout(() => {
+      input.classList.remove('shake');
+      input.value = '';
+    }, 400);
+  }
+}
+</script>
 </body>
 </html>
