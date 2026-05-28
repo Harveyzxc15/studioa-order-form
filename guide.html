@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<title>使用指南 — Studio A 訂購需求系統</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, sans-serif; background: #f5f5f7; color: #1d1d1f; font-size: 14px; line-height: 1.7; }
+
+.header { background: #1d1d1f; color: #fff; padding: 16px 24px; display: flex; align-items: center; justify-content: space-between; }
+.header-left h1 { font-size: 18px; font-weight: 600; }
+.header-left p { font-size: 12px; color: #a1a1a6; margin-top: 3px; }
+.header a { color: #a1a1a6; font-size: 13px; text-decoration: none; }
+.header a:hover { color: #fff; }
+
+.container { max-width: 760px; margin: 32px auto; padding: 0 20px 80px; }
+
+/* 目錄 */
+.toc { background: #fff; border-radius: 14px; padding: 20px 24px; margin-bottom: 28px; box-shadow: 0 1px 4px rgba(0,0,0,.08); }
+.toc h2 { font-size: 14px; font-weight: 700; color: #6e6e73; margin-bottom: 12px; letter-spacing: .5px; }
+.toc-list { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+.toc-list li { display: flex; align-items: center; gap: 8px; }
+.toc-list a { color: #0071e3; text-decoration: none; font-size: 14px; font-weight: 500; }
+.toc-list a:hover { text-decoration: underline; }
+.toc-badge { font-size: 11px; padding: 2px 8px; border-radius: 20px; font-weight: 600; }
+.badge-store { background: #e3f0ff; color: #0071e3; }
+.badge-bob   { background: #e8f5e9; color: #1b5e20; }
+.badge-sys   { background: #f3e5f5; color: #4a148c; }
+
+/* 章節 */
+.section { margin-bottom: 32px; }
+.section-header { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; padding-bottom: 10px; border-bottom: 2px solid #e5e5ea; }
+.section-icon { font-size: 22px; }
+.section-header h2 { font-size: 20px; font-weight: 700; }
+.section-header .audience { font-size: 12px; font-weight: 600; padding: 3px 10px; border-radius: 20px; }
+.aud-store { background: #e3f0ff; color: #0071e3; }
+.aud-bob   { background: #e8f5e9; color: #1b5e20; }
+.aud-sys   { background: #f3e5f5; color: #4a148c; }
+
+.card { background: #fff; border-radius: 12px; padding: 20px; margin-bottom: 12px; box-shadow: 0 1px 4px rgba(0,0,0,.08); }
+.card h3 { font-size: 15px; font-weight: 700; margin-bottom: 12px; color: #1d1d1f; }
+.card p { color: #3a3a3c; margin-bottom: 8px; }
+.card p:last-child { margin-bottom: 0; }
+
+/* 流程步驟 */
+.flow { display: flex; flex-direction: column; gap: 0; }
+.flow-step { display: flex; gap: 16px; position: relative; }
+.flow-step:not(:last-child)::before { content: ''; position: absolute; left: 15px; top: 36px; bottom: -4px; width: 2px; background: #e5e5ea; }
+.flow-num { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; color: #fff; flex-shrink: 0; margin-top: 4px; }
+.flow-num.blue   { background: #0071e3; }
+.flow-num.green  { background: #34c759; }
+.flow-num.purple { background: #5856d6; }
+.flow-content { padding-bottom: 20px; flex: 1; }
+.flow-content h4 { font-size: 14px; font-weight: 700; margin-bottom: 4px; color: #1d1d1f; }
+.flow-content p  { font-size: 13px; color: #3a3a3c; }
+.flow-content .sub { margin-top: 6px; background: #f5f5f7; border-radius: 8px; padding: 8px 12px; font-size: 12px; color: #3a3a3c; }
+
+/* 警示框 */
+.alert-box { border-radius: 10px; padding: 12px 16px; margin-bottom: 10px; font-size: 13px; display: flex; gap: 10px; align-items: flex-start; }
+.alert-box .ico { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+.alert-warn  { background: #fff3e0; border-left: 4px solid #ff9500; }
+.alert-info  { background: #e3f0ff; border-left: 4px solid #0071e3; }
+.alert-ok    { background: #e8f5e9; border-left: 4px solid #34c759; }
+.alert-box strong { display: block; margin-bottom: 2px; }
+
+/* 表格 */
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+th { background: #f5f5f7; padding: 9px 12px; text-align: left; font-weight: 600; color: #6e6e73; border-bottom: 1px solid #e5e5ea; }
+td { padding: 9px 12px; border-bottom: 1px solid #f0f0f2; vertical-align: top; }
+tr:last-child td { border-bottom: none; }
+
+/* 程式碼 */
+code { background: #f5f5f7; border-radius: 5px; padding: 2px 7px; font-family: 'SF Mono', monospace; font-size: 12px; color: #1d1d1f; }
+.code-block { background: #1d1d1f; border-radius: 10px; padding: 14px 16px; font-family: 'SF Mono', monospace; font-size: 12px; color: #d1d1d6; line-height: 1.8; overflow-x: auto; margin: 8px 0; }
+.code-block .comment { color: #6e6e73; }
+
+/* 連結清單 */
+.link-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 8px; }
+.link-chip { background: #e3f0ff; color: #0071e3; padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: 500; text-decoration: none; }
+.link-chip:hover { background: #cce4ff; }
+.link-chip.green { background: #e8f5e9; color: #1b5e20; }
+
+@media (max-width: 500px) {
+  .section-header h2 { font-size: 16px; }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <h1>📖 使用指南</h1>
+    <p>Studio A 北一區訂購需求系統 — 完整流程說明</p>
+  </div>
+  <a href="index.html">← 回到表單</a>
+</div>
+
+<div class="container">
+
+  <!-- 目錄 -->
+  <div class="toc">
+    <h2>目錄</h2>
+    <ul class="toc-list">
+      <li><span class="toc-badge badge-store">門市</span><a href="#s1">一、系統概覽</a></li>
+      <li><span class="toc-badge badge-store">門市</span><a href="#s2">二、門市操作流程</a></li>
+      <li><span class="toc-badge badge-store">門市</span><a href="#s3">三、商品類型填寫說明</a></li>
+      <li><span class="toc-badge badge-bob">Bob</span><a href="#s4">四、訂購追蹤後台操作</a></li>
+      <li><span class="toc-badge badge-bob">Bob</span><a href="#s5">五、狀態流程與等待天數</a></li>
+      <li><span class="toc-badge badge-sys">維護</span><a href="#s6">六、系統架構與維護</a></li>
+    </ul>
+  </div>
+
+  <!-- ① 系統概覽 -->
+  <div class="section" id="s1">
+    <div class="section-header">
+      <span class="section-icon">🗺️</span>
+      <h2>一、系統概覽</h2>
+    </div>
+
+    <div class="card">
+      <h3>這套系統解決什麼問題？</h3>
+      <p>北一區六間門市向採購提出商品需求時，常忘記 CC Bob，導致無法追蹤下訂時間與到貨狀態。</p>
+      <p>本系統分為兩個部分：</p>
+    </div>
+
+    <div class="card">
+      <table>
+        <thead><tr><th>元件</th><th>用途</th><th>使用者</th><th>位置</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><strong>📋 需求表單</strong></td>
+            <td>填寫商品資料，自動產生格式正確的信件</td>
+            <td>門市人員</td>
+            <td>GitHub Pages（任何裝置可開）</td>
+          </tr>
+          <tr>
+            <td><strong>📦 追蹤後台</strong></td>
+            <td>追蹤所有訂購需求的下單、出貨、到貨狀態</td>
+            <td>Bob</td>
+            <td>本機 localhost:5556</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <h3>整體流程圖</h3>
+      <div class="flow">
+        <div class="flow-step">
+          <div class="flow-num blue">1</div>
+          <div class="flow-content">
+            <h4>門市填寫表單</h4>
+            <p>開啟表單網頁，選擇門市、填入商品資料</p>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-num blue">2</div>
+          <div class="flow-content">
+            <h4>產生信件並發送</h4>
+            <p>系統自動帶入收件人（Ellen / Clare）、副本（門市 + 店長 + Bob）、主旨、內文</p>
+            <div class="sub">✉️ 信件從門市自己的 Mail 發出，Bob 的信箱自動收到副本</div>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-num green">3</div>
+          <div class="flow-content">
+            <h4>後台自動掃描（每天 09:00）</h4>
+            <p>系統自動從 Bob 的 Apple Mail 抓取訂購信，建立追蹤記錄</p>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-num green">4</div>
+          <div class="flow-content">
+            <h4>Bob 確認已下單</h4>
+            <p>Clare / Ellen 回覆後，Bob 在後台點「確認已下單」並輸入實際下單日期，開始計算等待天數</p>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-num purple">5</div>
+          <div class="flow-content">
+            <h4>EPB 自動偵測到貨</h4>
+            <p>系統查詢 EPB 調撥記錄（090J 出貨中 / 140eb 已到貨），自動更新狀態</p>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-num purple">6</div>
+          <div class="flow-content">
+            <h4>逾期 Discord 通知</h4>
+            <p>超過 14 個工作天未到貨，自動發送 Discord 通知</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ② 門市操作流程 -->
+  <div class="section" id="s2">
+    <div class="section-header">
+      <span class="section-icon">🏪</span>
+      <h2>二、門市操作流程</h2>
+      <span class="audience aud-store">門市人員</span>
+    </div>
+
+    <div class="alert-box alert-warn">
+      <span class="ico">⚠️</span>
+      <div><strong>寄出前請店長確認</strong>信件內容所有資料正確無誤，信件一旦發出即視為正式訂購需求。</div>
+    </div>
+
+    <div class="card">
+      <h3>Step 1 — 開啟表單</h3>
+      <p>使用任何裝置（電腦、手機、平板）開啟：</p>
+      <div class="link-row">
+        <a href="index.html" class="link-chip">📋 開啟表單</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Step 2 — 選擇門市</h3>
+      <p>在「基本資訊」選擇正確的門市名稱。選錯門市會導致副本收件人錯誤，採購回覆也可能漏通知。</p>
+    </div>
+
+    <div class="card">
+      <h3>Step 3 — 新增商品</h3>
+      <p>點「＋ 新增商品」，選擇商品類型後填入欄位。<br>同一封信有多筆需求時，重複新增即可，不需分開寄送。</p>
+      <div class="alert-box alert-info" style="margin-top:10px">
+        <span class="ico">ℹ️</span>
+        <div><strong>存貨代碼必須為 8 碼數字</strong>（例：<code>07312305</code>）。格式錯誤會立即提示，無法產生信件。</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Step 4 — 確認預覽</h3>
+      <p>點「📧 產生信件預覽」，仔細核對收件人、副本、主旨與信件內文，確認無誤再繼續。</p>
+      <div class="alert-box alert-warn" style="margin-top:10px">
+        <span class="ico">⚠️</span>
+        <div>若發現資料有誤，點「← 返回修改」修正後重新產生預覽。</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Step 5 — 開啟 Mail 發送</h3>
+      <p>點「✉️ 開啟 Mail 發送」，Apple Mail 會自動帶入所有資訊。</p>
+      <p style="margin-top:8px">在 Mail 中：</p>
+      <ol style="margin-left:18px;margin-top:6px;font-size:13px;color:#3a3a3c;display:flex;flex-direction:column;gap:4px">
+        <li>再次確認收件人、副本、主旨</li>
+        <li>若為 CTO 或 iPad 高容量，附上所需附件</li>
+        <li>確認無誤後按發送</li>
+      </ol>
+    </div>
+
+    <div class="alert-box alert-ok">
+      <span class="ico">✅</span>
+      <div><strong>信件發出後不需要其他動作。</strong>Bob 的信箱會自動收到副本，系統每天早上 09:00 自動掃描並建立追蹤記錄。</div>
+    </div>
+  </div>
+
+  <!-- ③ 商品類型 -->
+  <div class="section" id="s3">
+    <div class="section-header">
+      <span class="section-icon">📦</span>
+      <h2>三、商品類型填寫說明</h2>
+      <span class="audience aud-store">門市人員</span>
+    </div>
+
+    <div class="card">
+      <h3>🛒 原廠商品</h3>
+      <p>適用一般庫存商品（非客製、非高容量 iPad）。</p>
+      <table style="margin-top:10px">
+        <thead><tr><th>欄位</th><th>說明</th></tr></thead>
+        <tbody>
+          <tr><td><strong>存貨代碼 *</strong></td><td>8 碼數字，從系統查詢（例：<code>07312305</code>）</td></tr>
+          <tr><td><strong>商品名稱 *</strong></td><td>完整商品名稱（例：ME2J4TA/A Powerbeats Fit Jet Black）</td></tr>
+          <tr><td><strong>數量 *</strong></td><td>需求數量</td></tr>
+          <tr><td><strong>單價 *</strong></td><td>售價（例：6990）</td></tr>
+          <tr><td><strong>是否已收訂金 *</strong></td><td>已全額付清 / 已收部分訂金 / 未結清</td></tr>
+          <tr><td>備註</td><td>選填，其他補充說明</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <h3>📱 iPad 高容量</h3>
+      <p>適用：iPad Pro 512G/1TB/2TB、iPad Air 512G/1TB、CEL 版 iPad。</p>
+      <table style="margin-top:10px">
+        <thead><tr><th>欄位</th><th>說明</th></tr></thead>
+        <tbody>
+          <tr><td><strong>存貨代碼 *</strong></td><td>8 碼數字</td></tr>
+          <tr><td><strong>商品名稱 *</strong></td><td>完整規格名稱（例：iPad Pro 13吋 M4 1TB Wi-Fi 黑色）</td></tr>
+          <tr><td><strong>數量 *</strong></td><td>需求數量</td></tr>
+          <tr><td><strong>是否已收訂金 *</strong></td><td>已全額付清 / 已收部分訂金 / 未結清</td></tr>
+          <tr><td>備註</td><td>選填</td></tr>
+        </tbody>
+      </table>
+      <div class="alert-box alert-warn" style="margin-top:12px">
+        <span class="ico">📎</span>
+        <div><strong>必附附件：</strong>客戶已結帳單據（含發票及訂購單）</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>⚙️ CTO 客製機</h3>
+      <p>適用 Apple 官網客製化規格商品。需先在 Apple 官網設定好規格。</p>
+      <table style="margin-top:10px">
+        <thead><tr><th>欄位</th><th>說明</th></tr></thead>
+        <tbody>
+          <tr><td><strong>原存貨代碼 *</strong></td><td>原始機型的 8 碼存貨代碼（例：<code>07312164</code>）</td></tr>
+          <tr><td><strong>原產品名稱 *</strong></td><td>原始機型名稱（例：MAC STUDIO/M4 Max/16C CPU/40C GPU/64GB/512G）</td></tr>
+          <tr><td><strong>原價 *</strong></td><td>原始售價</td></tr>
+          <tr><td><strong>客製規格 *</strong></td><td>客製內容（例：記憶體 128GB、硬碟 2TB）</td></tr>
+          <tr><td><strong>客製後價格 *</strong></td><td>客製後售價</td></tr>
+          <tr><td><strong>客製網址 *</strong></td><td>在 Apple 官網設定完成後複製的網址</td></tr>
+          <tr><td>備註</td><td>選填</td></tr>
+        </tbody>
+      </table>
+      <div class="alert-box alert-warn" style="margin-top:12px">
+        <span class="ico">📎</span>
+        <div><strong>必附附件：</strong>①客製機截圖 ②客戶已結帳單據（含發票及訂購單）</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ④ 後台操作 -->
+  <div class="section" id="s4">
+    <div class="section-header">
+      <span class="section-icon">🖥️</span>
+      <h2>四、訂購追蹤後台操作</h2>
+      <span class="audience aud-bob">Bob</span>
+    </div>
+
+    <div class="card">
+      <h3>開啟後台</h3>
+      <p>點選選單列 📊 → <strong>📦 訂購需求追蹤</strong>，或直接開啟：</p>
+      <div class="link-row">
+        <a href="http://localhost:5556" class="link-chip green">🖥️ 開啟後台</a>
+      </div>
+      <p style="margin-top:10px;font-size:12px;color:#6e6e73">若頁面無法開啟，表示 Flask server 尚未啟動。點選選單列圖示會自動啟動。</p>
+    </div>
+
+    <div class="card">
+      <h3>後台功能說明</h3>
+      <table>
+        <thead><tr><th>按鈕</th><th>功能</th><th>何時使用</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><strong>🔄 掃描信件</strong></td>
+            <td>手動掃描 Apple Mail，匯入新訂購信及採購回覆</td>
+            <td>想立即更新，不等每天 09:00</td>
+          </tr>
+          <tr>
+            <td><strong>📡 EPB 查詢</strong></td>
+            <td>查詢所有未到貨訂單的出貨與到貨狀態</td>
+            <td>想確認最新到貨狀態</td>
+          </tr>
+          <tr>
+            <td><strong>✅ 確認已下單</strong></td>
+            <td>標記採購已確認下單，輸入實際下單日期</td>
+            <td>收到 Clare / Ellen 回覆確認後</td>
+          </tr>
+          <tr>
+            <td><strong>手動到貨</strong></td>
+            <td>手動標記已到貨（EPB 查不到時）</td>
+            <td>CTO 客製機 或 EPB 未更新</td>
+          </tr>
+          <tr>
+            <td><strong>取消確認</strong></td>
+            <td>取消已下單狀態</td>
+            <td>誤按時使用</td>
+          </tr>
+          <tr>
+            <td><strong>刪除</strong></td>
+            <td>刪除錯誤記錄</td>
+            <td>系統誤判匯入的記錄</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <h3>確認已下單 — 日期輸入說明</h3>
+      <p>點「確認已下單」後會彈出視窗要求輸入<strong>實際下單日期</strong>。</p>
+      <div class="alert-box alert-info" style="margin-top:8px">
+        <span class="ico">ℹ️</span>
+        <div>等待天數從這個日期起算，請輸入 Clare / Ellen 回覆確認當天的日期（格式：<code>2026-05-28</code>），而非今天。若當天即時確認，直接按 Enter 使用預設值即可。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ⑤ 狀態流程 -->
+  <div class="section" id="s5">
+    <div class="section-header">
+      <span class="section-icon">📊</span>
+      <h2>五、狀態流程與等待天數</h2>
+      <span class="audience aud-bob">Bob</span>
+    </div>
+
+    <div class="card">
+      <h3>狀態流程</h3>
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:13px;margin-top:4px">
+        <span style="background:#fff3e0;color:#e65100;padding:5px 12px;border-radius:20px;font-weight:600">⏳ 待採購確認</span>
+        <span style="color:#6e6e73">→ 手動點確認</span>
+        <span style="background:#e3f2fd;color:#1565c0;padding:5px 12px;border-radius:20px;font-weight:600">✅ 已下單</span>
+        <span style="color:#6e6e73">→ EPB 090J</span>
+        <span style="background:#ede7f6;color:#4527a0;padding:5px 12px;border-radius:20px;font-weight:600">🚚 出貨中</span>
+        <span style="color:#6e6e73">→ EPB 140eb</span>
+        <span style="background:#e8f5e9;color:#1b5e20;padding:5px 12px;border-radius:20px;font-weight:600">🏪 已到貨</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>等待天數計算規則</h3>
+      <table>
+        <thead><tr><th>項目</th><th>說明</th></tr></thead>
+        <tbody>
+          <tr><td><strong>起算點</strong></td><td>Bob 點「確認已下單」時輸入的實際下單日期</td></tr>
+          <tr><td><strong>終點</strong></td><td>EPB 偵測到 140eb（已到貨），否則顯示至今天</td></tr>
+          <tr><td><strong>顯示顏色</strong></td><td>綠色 &lt; 7 天　橘色 7–13 天　紅色 ≥ 14 天</td></tr>
+          <tr><td><strong>已到貨</strong></td><td>顯示「共等 N 天」（灰色），不再計時</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <h3>Discord 逾期通知</h3>
+      <p>超過 <strong>14 個工作天（不含週六日）</strong>未到貨，系統自動發送 Discord 通知。</p>
+      <div class="alert-box alert-info" style="margin-top:8px">
+        <span class="ico">ℹ️</span>
+        <div>每筆訂單只通知一次，不會重複提醒。CTO 客製機因無法 EPB 自動偵測，需手動點「手動到貨」才會停止計時。</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>EPB 查詢說明</h3>
+      <table>
+        <thead><tr><th>交易代碼</th><th>意義</th><th>對應狀態</th></tr></thead>
+        <tbody>
+          <tr><td><code>090J</code></td><td>調撥出（倉庫出貨，尚未到門市）</td><td>🚚 出貨中</td></tr>
+          <tr><td><code>140eb</code></td><td>調撥收（門市收貨入庫完成）</td><td>🏪 已到貨</td></tr>
+        </tbody>
+      </table>
+      <p style="margin-top:10px;font-size:12px;color:#6e6e73">CTO 客製機無存貨代碼，EPB 無法自動偵測，需手動更新。</p>
+    </div>
+  </div>
+
+  <!-- ⑥ 系統架構 -->
+  <div class="section" id="s6">
+    <div class="section-header">
+      <span class="section-icon">⚙️</span>
+      <h2>六、系統架構與維護</h2>
+      <span class="audience aud-sys">維護</span>
+    </div>
+
+    <div class="card">
+      <h3>檔案位置</h3>
+      <table>
+        <thead><tr><th>項目</th><th>路徑</th></tr></thead>
+        <tbody>
+          <tr><td>後台程式</td><td><code>~/order_tracker/app.py</code></td></tr>
+          <tr><td>自動掃描腳本</td><td><code>~/order_tracker/auto_scan.py</code></td></tr>
+          <tr><td>資料庫</td><td><code>~/order_tracker/orders.db</code></td></tr>
+          <tr><td>啟動腳本</td><td><code>~/order_tracker/run.sh</code></td></tr>
+          <tr><td>launchd 定時任務</td><td><code>~/Library/LaunchAgents/com.studioa.order_tracker_scan.plist</code></td></tr>
+          <tr><td>表單原始碼</td><td><code>~/order_form_pages/index.html</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <h3>GitHub 版本控制</h3>
+      <table>
+        <thead><tr><th>Repo</th><th>內容</th><th>可見性</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><a href="https://github.com/Harveyzxc15/studioa-order-tracker" style="color:#0071e3">studioa-order-tracker</a></td>
+            <td>Flask 後台程式碼</td>
+            <td>🔒 私人</td>
+          </tr>
+          <tr>
+            <td><a href="https://github.com/Harveyzxc15/studioa-order-form" style="color:#0071e3">studioa-order-form</a></td>
+            <td>門市填單表單</td>
+            <td>🌐 公開</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <h3>修改表單後更新步驟</h3>
+      <div class="code-block">
+<span class="comment"># 1. 編輯表單</span>
+~/order_form_pages/index.html
+
+<span class="comment"># 2. 記得更新版本號（在 index.html 搜尋 version-badge）</span>
+&lt;span class="version-badge"&gt;v1.x&lt;/span&gt;
+
+<span class="comment"># 3. 推上 GitHub（1-2 分鐘後生效）</span>
+cd ~/order_form_pages
+git add index.html && git commit -m "v1.x - 說明" && git push</div>
+    </div>
+
+    <div class="card">
+      <h3>修改後台程式後更新步驟</h3>
+      <div class="code-block">
+cd ~/order_tracker
+git add . && git commit -m "說明改了什麼" && git push
+
+<span class="comment"># 重啟 server 讓修改生效</span>
+lsof -ti:5556 | xargs kill -9
+python3 app.py &</div>
+    </div>
+
+    <div class="card">
+      <h3>自動掃描排程</h3>
+      <p>launchd 每天 <strong>09:00</strong> 自動執行 <code>auto_scan.py</code>，完成以下工作：</p>
+      <ol style="margin-left:18px;margin-top:8px;font-size:13px;color:#3a3a3c;display:flex;flex-direction:column;gap:4px">
+        <li>掃描 Apple Mail，匯入新訂購信</li>
+        <li>掃描 Clare / Ellen 的採購回覆</li>
+        <li>檢查是否有超過 14 個工作天的未到貨訂單，送出 Discord 通知</li>
+      </ol>
+      <div class="code-block" style="margin-top:12px">
+<span class="comment"># 手動執行（測試用）</span>
+cd ~/order_tracker && python3 auto_scan.py
+
+<span class="comment"># 查看執行 log</span>
+cat /tmp/order_tracker_scan.log</div>
+    </div>
+
+    <div class="card">
+      <h3>常見問題</h3>
+      <table>
+        <thead><tr><th>問題</th><th>解法</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>後台無法開啟</td>
+            <td>點選單列 📊 → 📦 訂購需求追蹤，會自動重啟 server</td>
+          </tr>
+          <tr>
+            <td>掃描沒有匯入新信</td>
+            <td>確認信件主旨包含「原廠商品」「客製機需求」等關鍵字，且有 CC bob.yu@studioa.com.tw</td>
+          </tr>
+          <tr>
+            <td>EPB 查不到狀態</td>
+            <td>確認存貨代碼正確（8碼），CTO 請手動更新</td>
+          </tr>
+          <tr>
+            <td>表單頁面沒更新</td>
+            <td>按 ⌘+Option+R 強制重新整理</td>
+          </tr>
+          <tr>
+            <td>Discord 沒收到通知</td>
+            <td>確認 app.py 中 DISCORD_WEBHOOK 有填入，且訂單狀態為已下單但未到貨</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+
+</div>
+</body>
+</html>
