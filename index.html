@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>原廠商品需求表單</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, sans-serif; background: #f5f5f7; color: #1d1d1f; min-height: 100vh; }
+
+.header { background: #1d1d1f; color: #fff; padding: 16px 24px; }
+.header h1 { font-size: 18px; font-weight: 600; }
+.header p { font-size: 12px; color: #a1a1a6; margin-top: 3px; }
+
+.container { max-width: 680px; margin: 30px auto; padding: 0 20px 60px; }
+
+.card { background: #fff; border-radius: 14px; padding: 24px; margin-bottom: 16px; box-shadow: 0 1px 4px rgba(0,0,0,.08); }
+.card-title { font-size: 15px; font-weight: 600; margin-bottom: 16px; color: #1d1d1f; border-bottom: 1px solid #f0f0f2; padding-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+
+.form-group { margin-bottom: 14px; }
+label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 5px; color: #3a3a3c; }
+.req { color: #ff3b30; margin-left: 2px; }
+input[type=text], input[type=number], select, textarea {
+  width: 100%; padding: 10px 12px; border: 1.5px solid #d1d1d6;
+  border-radius: 8px; font-size: 14px; background: #fff; transition: border-color .15s;
+}
+input:focus, select:focus, textarea:focus { outline: none; border-color: #0071e3; }
+input.error { border-color: #ff3b30; }
+.error-msg { font-size: 11px; color: #ff3b30; margin-top: 3px; display: none; }
+.error-msg.show { display: block; }
+textarea { min-height: 70px; resize: vertical; }
+.row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.hint { font-size: 12px; color: #6e6e73; margin-top: 4px; }
+.alert { background: #fff3e0; border: 1px solid #ffe0b2; border-radius: 8px; padding: 9px 12px; font-size: 12px; color: #e65100; margin-bottom: 12px; }
+
+/* 類型選擇 */
+.type-tabs { display: flex; gap: 8px; margin-bottom: 16px; }
+.type-tab { flex: 1; padding: 9px 4px; border-radius: 10px; border: 2px solid #d1d1d6; background: #fff;
+  cursor: pointer; text-align: center; font-size: 12px; font-weight: 600; color: #6e6e73; transition: all .15s; }
+.type-tab:hover { border-color: #0071e3; color: #0071e3; }
+.type-tab.active { border-color: #0071e3; background: #e3f0ff; color: #0071e3; }
+
+/* 商品區塊 */
+.item-block { background: #fff; border-radius: 14px; padding: 20px; margin-bottom: 12px; box-shadow: 0 1px 4px rgba(0,0,0,.08); border-left: 4px solid #d1d1d6; }
+.item-block.type-normal { border-left-color: #0071e3; }
+.item-block.type-ipad   { border-left-color: #5856d6; }
+.item-block.type-cto    { border-left-color: #ff2d55; }
+.item-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+.item-num { font-size: 13px; font-weight: 700; color: #6e6e73; }
+.btn-remove { background: none; border: none; color: #ff3b30; cursor: pointer; font-size: 13px; padding: 4px 8px; border-radius: 6px; }
+.btn-remove:hover { background: #ffebee; }
+.item-fields { display: none; }
+.item-fields.show { display: block; }
+
+/* 按鈕 */
+.btn { width: 100%; padding: 13px; border-radius: 10px; border: none; cursor: pointer; font-size: 15px; font-weight: 600; }
+.btn-primary { background: #0071e3; color: #fff; }
+.btn-primary:hover { background: #0077ed; }
+.btn-add { background: #f0f7ff; color: #0071e3; border: 2px dashed #0071e3; padding: 12px; margin-bottom: 16px; }
+.btn-add:hover { background: #e3f0ff; }
+.btn-ghost { background: #e8e8ed; color: #1d1d1f; }
+.btn-open { background: #34c759; color: #fff; }
+.btn-open:hover { background: #28b04a; }
+.btn-back { background: #e8e8ed; color: #1d1d1f; }
+
+/* 預覽 */
+.preview-wrap { display: none; }
+.preview-wrap.show { display: block; }
+.preview-header { display: grid; grid-template-columns: auto 1fr; gap: 4px 10px; font-size: 13px; margin-bottom: 12px; }
+.preview-header .lbl { font-weight: 600; color: #6e6e73; }
+.email-preview { background: #f9f9fb; border: 1.5px solid #d1d1d6; border-radius: 10px; padding: 16px; font-family: monospace; font-size: 13px; line-height: 1.7; white-space: pre-wrap; word-break: break-all; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>📦 原廠商品 / 客製機需求</h1>
+  <p>填寫完成後產生信件，確認內容再發送</p>
+</div>
+
+<div class="container">
+
+  <!-- 表單 -->
+  <div id="formSection">
+    <!-- 基本資訊 -->
+    <div class="card">
+      <div class="card-title">基本資訊</div>
+      <div class="form-group">
+        <label>門市 <span class="req">*</span></label>
+        <select id="store">
+          <option value="">請選擇門市</option>
+          <option>士林</option><option>微風</option><option>美麗華</option>
+          <option>阿波羅</option><option>大葉高島屋</option><option>羅東</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- 商品列表 -->
+    <div id="itemList"></div>
+
+    <!-- 新增商品按鈕 -->
+    <button class="btn btn-add" onclick="addItem()">＋ 新增商品</button>
+
+    <div class="card">
+      <button class="btn btn-primary" onclick="generateEmail()">📧 產生信件預覽</button>
+    </div>
+  </div>
+
+  <!-- 預覽 -->
+  <div id="previewSection" class="preview-wrap">
+    <div class="card">
+      <div class="card-title">✉️ 信件預覽 — 確認後發送</div>
+      <div class="preview-header">
+        <span class="lbl">收件人</span><span class="val">Ellen 黃千玲、Clare 林佳儀</span>
+        <span class="lbl">副本</span><span class="val" id="prev-cc"></span>
+        <span class="lbl">主旨</span><span class="val" id="prev-subject"></span>
+      </div>
+      <div class="email-preview" id="prev-body"></div>
+    </div>
+    <div class="card">
+      <button class="btn btn-open" onclick="openMail()">✉️ 開啟 Mail 發送</button>
+      <button class="btn btn-back" style="margin-top:10px" onclick="goBack()">← 返回修改</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- 商品 template -->
+<template id="tpl-normal">
+  <div class="form-group">
+    <label>存貨代碼 <span class="req">*</span></label>
+    <input type="text" name="stk" placeholder="例：07312305" oninput="validateStk(this)">
+    <div class="error-msg">存貨代碼須為 8 碼數字</div>
+  </div>
+  <div class="form-group">
+    <label>商品名稱 <span class="req">*</span></label>
+    <input type="text" name="pname" placeholder="例：ME2J4TA/A Powerbeats Fit Jet Black">
+  </div>
+  <div class="row2">
+    <div class="form-group">
+      <label>數量 <span class="req">*</span></label>
+      <input type="number" name="qty" value="1" min="1">
+    </div>
+    <div class="form-group">
+      <label>單價 <span class="req">*</span></label>
+      <input type="text" name="price" placeholder="例：6990">
+    </div>
+  </div>
+  <div class="form-group">
+    <label>是否已收訂金 <span class="req">*</span></label>
+    <select name="deposit">
+      <option>已全額付清</option>
+      <option>已收部分訂金</option>
+      <option>未結清</option>
+    </select>
+  </div>
+  <div class="form-group">
+    <label>備註</label>
+    <textarea name="note" placeholder="其他說明"></textarea>
+  </div>
+</template>
+
+<template id="tpl-ipad">
+  <div class="alert">⚠️ 適用：iPad Pro 512G/1TB/2TB、iPad Air 512G/1TB、CEL 版 iPad</div>
+  <div class="form-group">
+    <label>存貨代碼 <span class="req">*</span></label>
+    <input type="text" name="stk" placeholder="例：07312001" oninput="validateStk(this)">
+    <div class="error-msg">存貨代碼須為 8 碼數字</div>
+  </div>
+  <div class="form-group">
+    <label>商品名稱 <span class="req">*</span></label>
+    <input type="text" name="pname" placeholder="例：iPad Pro 13吋 M4 1TB Wi-Fi 黑色">
+  </div>
+  <div class="row2">
+    <div class="form-group">
+      <label>數量 <span class="req">*</span></label>
+      <input type="number" name="qty" value="1" min="1">
+    </div>
+    <div class="form-group">
+      <label>是否已收訂金 <span class="req">*</span></label>
+      <select name="deposit">
+        <option>已全額付清</option>
+        <option>已收部分訂金</option>
+        <option>未結清</option>
+      </select>
+    </div>
+  </div>
+  <div class="form-group">
+    <label>備註</label>
+    <textarea name="note" placeholder="其他說明"></textarea>
+  </div>
+</template>
+
+<template id="tpl-cto">
+  <div class="form-group">
+    <label>原存貨代碼 <span class="req">*</span></label>
+    <input type="text" name="stk" placeholder="例：07312164" oninput="validateStk(this)">
+    <div class="error-msg">存貨代碼須為 8 碼數字</div>
+  </div>
+  <div class="form-group">
+    <label>原產品名稱 <span class="req">*</span></label>
+    <input type="text" name="pname" placeholder="例：MAC STUDIO/M4 Max/16C CPU/40C GPU/64GB/512G">
+  </div>
+  <div class="row2">
+    <div class="form-group">
+      <label>原價 <span class="req">*</span></label>
+      <input type="text" name="price" placeholder="例：119900">
+    </div>
+    <div class="form-group">
+      <label>客製後價格 <span class="req">*</span></label>
+      <input type="text" name="newprice" placeholder="例：135900">
+    </div>
+  </div>
+  <div class="form-group">
+    <label>客製規格 <span class="req">*</span></label>
+    <textarea name="specs" placeholder="例：&#10;記憶體：128GB&#10;硬碟：2TB"></textarea>
+  </div>
+  <div class="form-group">
+    <label>客製點選完畢後網址 <span class="req">*</span></label>
+    <input type="text" name="url" placeholder="https://www.apple.com/...">
+    <p class="hint">在 Apple 官網設定好規格後，複製網址貼上</p>
+  </div>
+  <div class="form-group">
+    <label>備註</label>
+    <textarea name="note" placeholder="其他說明"></textarea>
+  </div>
+</template>
+
+<script>
+const TO = 'ellen@studioa.com.tw,Clare.Lin@studioa.com.tw';
+const BOB_CC = 'bob.yu@studioa.com.tw';
+const STORE_CC = {
+  '士林':      'shihlin@studioa.com.tw,Sam.Wang@studioa.com.tw',
+  '微風':      'breeze@studioa.com.tw,Nick.2391@studioa.com.tw',
+  '美麗華':    'miramar@studioa.com.tw,lee.lee@studioa.com.tw',
+  '阿波羅':    'apollo@studioa.com.tw,Ernest.Wang@studioa.com.tw',
+  '大葉高島屋':'dayeh@studioa.com.tw,Natalia.2057@studioa.com.tw',
+  '羅東':      'luodong@studioa.com.tw,Erin.2941@studioa.com.tw',
+};
+const CC_DISPLAY = {
+  '士林':      '士林門市、Sam 王彥翔、Bob 尤君暘',
+  '微風':      '微風門市、Nick 劉宇軒、Bob 尤君暘',
+  '美麗華':    '美麗華門市、Lee 李宜軒、Bob 尤君暘',
+  '阿波羅':    '阿波羅門市、Ernest 王筠文、Bob 尤君暘',
+  '大葉高島屋':'大葉高島屋門市、Natalia 林玟秀、Bob 尤君暘',
+  '羅東':      '羅東門市、Erin 游佩玲、Bob 尤君暘',
+};
+const CHINESE_NUMS = ['一','二','三','四','五','六','七','八','九','十'];
+
+let itemCount = 0;
+
+function getDateStr() {
+  const d = new Date();
+  return `${d.getFullYear()}${String(d.getMonth()+1).padStart(2,'0')}${String(d.getDate()).padStart(2,'0')}`;
+}
+
+function addItem() {
+  itemCount++;
+  const block = document.createElement('div');
+  block.className = 'item-block';
+  block.dataset.id = itemCount;
+  block.innerHTML = `
+    <div class="item-header">
+      <span class="item-num">商品 ${itemCount}</span>
+      <button class="btn-remove" onclick="removeItem(${itemCount})" type="button">✕ 移除</button>
+    </div>
+    <div class="type-tabs">
+      <div class="type-tab" onclick="setItemType(${itemCount},'normal',this)">🛒 原廠商品</div>
+      <div class="type-tab" onclick="setItemType(${itemCount},'ipad',this)">📱 iPad 高容量</div>
+      <div class="type-tab" onclick="setItemType(${itemCount},'cto',this)">⚙️ CTO 客製機</div>
+    </div>
+    <div class="item-fields" id="fields-${itemCount}"></div>
+  `;
+  document.getElementById('itemList').appendChild(block);
+  updateItemNums();
+}
+
+function removeItem(id) {
+  const el = document.querySelector(`[data-id="${id}"]`);
+  if (el) el.remove();
+  updateItemNums();
+}
+
+function updateItemNums() {
+  document.querySelectorAll('.item-block').forEach((b, i) => {
+    b.querySelector('.item-num').textContent = `商品 ${i+1}`;
+  });
+}
+
+function setItemType(id, type, tabEl) {
+  const block = document.querySelector(`[data-id="${id}"]`);
+  block.className = `item-block type-${type}`;
+  block.dataset.type = type;
+  block.querySelectorAll('.type-tab').forEach(t => t.classList.remove('active'));
+  tabEl.classList.add('active');
+
+  const fieldsEl = document.getElementById(`fields-${id}`);
+  const tpl = document.getElementById(`tpl-${type}`);
+  fieldsEl.innerHTML = '';
+  fieldsEl.appendChild(tpl.content.cloneNode(true));
+  fieldsEl.classList.add('show');
+}
+
+// SKU 驗證：8碼數字
+function validateStk(input) {
+  const val = input.value.trim();
+  const errEl = input.nextElementSibling;
+  const isValid = /^\d{8}$/.test(val) || val === '';
+  input.classList.toggle('error', !isValid && val !== '');
+  if (errEl && errEl.classList.contains('error-msg')) {
+    errEl.classList.toggle('show', !isValid && val !== '');
+  }
+}
+
+function getField(fieldsEl, name) {
+  const el = fieldsEl.querySelector(`[name="${name}"]`);
+  return el ? el.value.trim() : '';
+}
+
+function generateEmail() {
+  const store = document.getElementById('store').value;
+  if (!store) { alert('請選擇門市'); return; }
+
+  const blocks = document.querySelectorAll('.item-block');
+  if (blocks.length === 0) { alert('請至少新增一筆商品'); return; }
+
+  const sections = [];
+  let hasError = false;
+
+  blocks.forEach((block, idx) => {
+    const type = block.dataset.type;
+    if (!type) { alert(`商品 ${idx+1} 請選擇需求類型`); hasError = true; return; }
+    const f = block.querySelector('.item-fields');
+    const num = CHINESE_NUMS[idx] || String(idx+1);
+
+    if (type === 'normal') {
+      const stk = getField(f,'stk'), pname = getField(f,'pname'),
+            qty = getField(f,'qty'), price = getField(f,'price'),
+            dep = getField(f,'deposit'), note = getField(f,'note');
+      if (!stk || !pname || !price) { alert(`商品 ${idx+1}：請填寫所有必填欄位`); hasError = true; return; }
+      if (!/^\d{8}$/.test(stk)) { alert(`商品 ${idx+1}：存貨代碼須為 8 碼數字`); hasError = true; return; }
+      let s = `${num}、原廠商品\n存貨代碼：${stk}\n商品名稱：${pname}\n數量：${qty}\n單價：${price}\n是否已收訂金：${dep}`;
+      if (note) s += `\n備註：${note}`;
+      sections.push(s);
+    }
+    else if (type === 'ipad') {
+      const stk = getField(f,'stk'), pname = getField(f,'pname'),
+            qty = getField(f,'qty'), dep = getField(f,'deposit'), note = getField(f,'note');
+      if (!stk || !pname) { alert(`商品 ${idx+1}：請填寫所有必填欄位`); hasError = true; return; }
+      if (!/^\d{8}$/.test(stk)) { alert(`商品 ${idx+1}：存貨代碼須為 8 碼數字`); hasError = true; return; }
+      let s = `${num}、iPad 高容量\n存貨代碼：${stk}\n商品名稱：${pname}\n數量：${qty}\n是否已收訂金：${dep}`;
+      if (note) s += `\n備註：${note}`;
+      s += `\n\n附件：\n1. 客戶已結帳單據（含發票及訂購單）`;
+      sections.push(s);
+    }
+    else if (type === 'cto') {
+      const stk = getField(f,'stk'), pname = getField(f,'pname'),
+            price = getField(f,'price'), newprice = getField(f,'newprice'),
+            specs = getField(f,'specs'), url = getField(f,'url'), note = getField(f,'note');
+      if (!stk || !pname || !price || !newprice || !specs || !url) {
+        alert(`商品 ${idx+1}：請填寫所有必填欄位`); hasError = true; return;
+      }
+      if (!/^\d{8}$/.test(stk)) { alert(`商品 ${idx+1}：存貨代碼須為 8 碼數字`); hasError = true; return; }
+      let s = `${num}、CTO 客製機\n原存貨代碼：${stk}\n原產品名稱：${pname}\n原價：${price}\n客製規格：${specs}\n客製後價格：${newprice}\n客製點選完畢後網址：${url}`;
+      if (note) s += `\n備註：${note}`;
+      s += `\n\n附件：\n1. 客製機截圖\n2. 客戶已結帳單據（含發票及訂購單）`;
+      sections.push(s);
+    }
+  });
+
+  if (hasError) return;
+
+  const subject = `${getDateStr()}${store}門市原廠商品/客製機需求`;
+  const body = `Dear Ellen Clare,\n\n${store}門市有以下需求，麻煩協助下訂，謝謝\n\n`
+             + sections.join('\n\n') ;
+
+  const storeCc = STORE_CC[store] || '';
+  const fullCc = [storeCc, BOB_CC].filter(Boolean).join(',');
+
+  document.getElementById('prev-cc').textContent = CC_DISPLAY[store] || 'Bob 尤君暘';
+  document.getElementById('prev-subject').textContent = subject;
+  document.getElementById('prev-body').textContent = body;
+  window._mailData = { subject, body, cc: fullCc };
+
+  document.getElementById('formSection').style.display = 'none';
+  document.getElementById('previewSection').classList.add('show');
+}
+
+function openMail() {
+  const { subject, body, cc } = window._mailData;
+  const mailto = `mailto:${TO}?cc=${encodeURIComponent(cc)}&subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  window.location.href = mailto;
+}
+
+function goBack() {
+  document.getElementById('formSection').style.display = 'block';
+  document.getElementById('previewSection').classList.remove('show');
+}
+
+// 預設加一筆
+addItem();
+</script>
+</body>
+</html>
