@@ -69,16 +69,146 @@ textarea { min-height: 70px; resize: vertical; }
 .preview-header { display: grid; grid-template-columns: auto 1fr; gap: 4px 10px; font-size: 13px; margin-bottom: 12px; }
 .preview-header .lbl { font-weight: 600; color: #6e6e73; }
 .email-preview { background: #f9f9fb; border: 1.5px solid #d1d1d6; border-radius: 10px; padding: 16px; font-family: monospace; font-size: 13px; line-height: 1.7; white-space: pre-wrap; word-break: break-all; }
+
+/* ── 說明白皮書 ──────────────────────────────────────── */
+.guide-card { background: #fff; border-radius: 14px; margin-bottom: 16px; box-shadow: 0 1px 4px rgba(0,0,0,.08); overflow: hidden; }
+.guide-head { display: flex; justify-content: space-between; align-items: center; padding: 16px 20px; cursor: pointer; user-select: none; }
+.guide-head-left { display: flex; align-items: center; gap: 10px; }
+.guide-head-left h2 { font-size: 15px; font-weight: 600; color: #1d1d1f; }
+.guide-head-left span { font-size: 12px; color: #6e6e73; }
+.guide-toggle-btn { font-size: 12px; color: #0071e3; font-weight: 500; background: none; border: none; cursor: pointer; padding: 4px 8px; border-radius: 6px; white-space: nowrap; }
+.guide-toggle-btn:hover { background: #e3f0ff; }
+.guide-body { padding: 0 20px 20px; display: none; }
+.guide-body.open { display: block; }
+
+.guide-section { margin-bottom: 20px; }
+.guide-section:last-child { margin-bottom: 0; }
+.guide-section h3 { font-size: 13px; font-weight: 700; color: #3a3a3c; margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid #f0f0f2; }
+
+/* 流程步驟 */
+.steps { display: flex; gap: 8px; flex-wrap: wrap; }
+.step { display: flex; align-items: flex-start; gap: 8px; background: #f5f5f7; border-radius: 10px; padding: 10px 12px; flex: 1; min-width: 120px; }
+.step-num { background: #0071e3; color: #fff; border-radius: 50%; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; flex-shrink: 0; margin-top: 1px; }
+.step-text { font-size: 12px; line-height: 1.5; color: #1d1d1f; }
+.step-text strong { display: block; font-size: 13px; margin-bottom: 2px; }
+
+/* 商品類型 */
+.type-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.type-box { border-radius: 10px; padding: 12px; font-size: 12px; line-height: 1.5; }
+.type-box.t-normal { background: #e3f0ff; border-left: 3px solid #0071e3; }
+.type-box.t-ipad   { background: #ede7f6; border-left: 3px solid #5856d6; }
+.type-box.t-cto    { background: #ffeef1; border-left: 3px solid #ff2d55; }
+.type-box strong { display: block; font-size: 13px; margin-bottom: 4px; }
+.type-box .tag { display: inline-block; background: rgba(0,0,0,.07); border-radius: 4px; padding: 1px 5px; font-size: 10px; margin-top: 4px; }
+
+/* 注意事項 */
+.notes { list-style: none; display: flex; flex-direction: column; gap: 7px; }
+.notes li { display: flex; gap: 8px; font-size: 13px; line-height: 1.5; }
+.notes li .icon { flex-shrink: 0; font-size: 14px; margin-top: 1px; }
+.notes li.warn .icon::before { content: '⚠️'; }
+.notes li.info .icon::before { content: 'ℹ️'; }
+.notes li.ok   .icon::before { content: '✅'; }
+.notes li.clip .icon::before { content: '📎'; }
+
+@media (max-width: 500px) {
+  .type-grid { grid-template-columns: 1fr; }
+  .steps { flex-direction: column; }
+}
 </style>
 </head>
 <body>
 
 <div class="header">
-  <h1>📦 原廠商品 / 客製機需求</h1>
-  <p>填寫完成後產生信件，確認內容再發送</p>
+  <h1>📦 原廠商品 / 客製機需求表單</h1>
+  <p>Studio A 北一區門市 ｜ 填寫完成後產生信件，確認內容再發送</p>
 </div>
 
 <div class="container">
+
+  <!-- ── 說明白皮書 ── -->
+  <div class="guide-card">
+    <div class="guide-head" onclick="toggleGuide()">
+      <div class="guide-head-left">
+        <h2>📋 使用說明與注意事項</h2>
+        <span>第一次使用請先閱讀</span>
+      </div>
+      <button class="guide-toggle-btn" id="guideToggleBtn">收起 ▲</button>
+    </div>
+    <div class="guide-body open" id="guideBody">
+
+      <!-- 目的 -->
+      <div class="guide-section">
+        <h3>目的</h3>
+        <p style="font-size:13px;line-height:1.7;color:#3a3a3c">
+          本表單供 <strong>士林、微風、美麗華、阿波羅、大葉高島屋、羅東</strong> 六間門市，
+          向採購（Ellen 黃千玲 / Clare 林佳儀）提出原廠商品或客製機需求。<br>
+          填寫完成後系統自動帶入收件人、副本、主旨與內文格式，<strong>由門市人員自行在 Mail 中確認並發送</strong>，
+          發出後 Bob 的信箱即可自動追蹤下訂與到貨狀態。
+        </p>
+      </div>
+
+      <!-- 操作流程 -->
+      <div class="guide-section">
+        <h3>操作流程</h3>
+        <div class="steps">
+          <div class="step">
+            <div class="step-num">1</div>
+            <div class="step-text"><strong>選擇門市</strong>副本與簽名將自動帶入該門市資訊</div>
+          </div>
+          <div class="step">
+            <div class="step-num">2</div>
+            <div class="step-text"><strong>新增商品</strong>點「＋ 新增商品」，選擇類型後填入欄位；同一封信可填多筆</div>
+          </div>
+          <div class="step">
+            <div class="step-num">3</div>
+            <div class="step-text"><strong>產生預覽</strong>點「📧 產生信件預覽」，確認所有資料無誤</div>
+          </div>
+          <div class="step">
+            <div class="step-num">4</div>
+            <div class="step-text"><strong>發送信件</strong>點「✉️ 開啟 Mail 發送」，在 Mail 中再次確認後按發送</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 商品類型 -->
+      <div class="guide-section">
+        <h3>商品類型說明</h3>
+        <div class="type-grid">
+          <div class="type-box t-normal">
+            <strong>🛒 原廠商品</strong>
+            一般庫存商品，需填寫存貨代碼、商品名稱、數量、單價及訂金狀態。
+            <span class="tag">有存貨代碼</span>
+          </div>
+          <div class="type-box t-ipad">
+            <strong>📱 iPad 高容量</strong>
+            iPad Pro 512G/1TB/2TB、iPad Air 512G/1TB、CEL 版 iPad，須附結帳單據。
+            <span class="tag">有存貨代碼</span><span class="tag">需附件</span>
+          </div>
+          <div class="type-box t-cto">
+            <strong>⚙️ CTO 客製機</strong>
+            Apple 官網客製化規格，需填原存貨代碼、規格、客製後網址，須附截圖及結帳單據。
+            <span class="tag">需附件</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 注意事項 -->
+      <div class="guide-section">
+        <h3>注意事項</h3>
+        <ul class="notes">
+          <li class="warn"><span class="icon"></span><span>寄出前<strong>必須由店長確認所有資料正確</strong>，信件一旦發出即視為正式訂購需求。</span></li>
+          <li class="warn"><span class="icon"></span><span><strong>存貨代碼必須為 8 碼數字</strong>（例：07312305），格式錯誤會立即提示，無法產生信件。</span></li>
+          <li class="info"><span class="icon"></span><span>標有 <span style="color:#ff3b30">*</span> 的欄位為必填，不可留空。</span></li>
+          <li class="info"><span class="icon"></span><span>信件<strong>主旨與收件人</strong>已自動帶入，請勿在 Mail 中修改，以確保後台可正確追蹤。</span></li>
+          <li class="clip"><span class="icon"></span><span><strong>CTO 客製機</strong>：發送信件時需同時附上 ①客製機截圖 ②客戶已結帳單據（含發票及訂購單）。</span></li>
+          <li class="clip"><span class="icon"></span><span><strong>iPad 高容量</strong>：發送信件時需附上客戶已結帳單據（含發票及訂購單）。</span></li>
+          <li class="ok"><span class="icon"></span><span>同一封信可填多筆商品，請重複點「＋ 新增商品」，不需分開寄送。</span></li>
+          <li class="ok"><span class="icon"></span><span>點「✉️ 開啟 Mail 發送」後，Apple Mail 會自動帶入所有資訊，<strong>在 Mail 中確認無誤後再按發送</strong>。</span></li>
+        </ul>
+      </div>
+
+    </div><!-- /guide-body -->
+  </div><!-- /guide-card -->
 
   <!-- 表單 -->
   <div id="formSection">
@@ -395,6 +525,13 @@ function openMail() {
 function goBack() {
   document.getElementById('formSection').style.display = 'block';
   document.getElementById('previewSection').classList.remove('show');
+}
+
+function toggleGuide() {
+  const body = document.getElementById('guideBody');
+  const btn  = document.getElementById('guideToggleBtn');
+  const open = body.classList.toggle('open');
+  btn.textContent = open ? '收起 ▲' : '展開說明 ▼';
 }
 
 // 預設加一筆
