@@ -131,18 +131,57 @@ let currentStatus = 'all';
 const urlStore = new URLSearchParams(location.search).get('store');
 if (urlStore && STORES.includes(urlStore)) currentStore = urlStore;
 
-fetch('data.json?t=' + Date.now())
-  .then(r => r.json())
-  .then(data => {
-    allOrders = data.orders || [];
-    document.getElementById('updatedAt').textContent = '更新時間：' + (data.updated_at || '—');
-    buildStoreTabs();
-    render();
-  })
-  .catch(() => {
-    document.getElementById('orderList').innerHTML =
-      '<div class="empty"><div class="ico">⚠️</div><div>資料載入失敗，請稍後再試</div></div>';
+// ── 通知功能 ──────────────────────────────────────────────
+const STORAGE_KEY = 'track_known_shipped';  // 已知出貨訂單 id 集合
+
+function getKnownShipped() {
+  try { return new Set(JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]')); }
+  catch { return new Set(); }
+}
+function saveKnownShipped(set) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify([...set]));
+}
+
+async function requestNotifyPermission() {
+  if (!('Notification' in window)) return;
+  if (Notification.permission === 'default') await Notification.requestPermission();
+}
+
+function checkNewShipped(orders) {
+  if (Notification.permission !== 'granted') return;
+  const known = getKnownShipped();
+  const newlyShipped = orders.filter(o => o.status === 'shipped' && !known.has(o.id));
+  newlyShipped.forEach(o => {
+    new Notification('🚚 訂單出貨中', {
+      body: `${o.store} ｜ ${o.product_name || o.stk_id}`,
+      icon: 'https://harveyzxc15.github.io/studioa-order-form/favicon.ico',
+    });
+    known.add(o.id);
   });
+  // 把到貨的訂單從已知集合移除（下次若重新出貨才不會漏）
+  orders.filter(o => o.status === 'arrived').forEach(o => known.delete(o.id));
+  saveKnownShipped(known);
+}
+
+// ── 資料載入 & 輪詢（每 3 分鐘） ─────────────────────────
+function loadData() {
+  return fetch('data.json?t=' + Date.now())
+    .then(r => r.json())
+    .then(data => {
+      allOrders = data.orders || [];
+      document.getElementById('updatedAt').textContent = '更新時間：' + (data.updated_at || '—');
+      checkNewShipped(allOrders);
+      buildStoreTabs();
+      render();
+    })
+    .catch(() => {
+      document.getElementById('orderList').innerHTML =
+        '<div class="empty"><div class="ico">⚠️</div><div>資料載入失敗，請稍後再試</div></div>';
+    });
+}
+
+requestNotifyPermission().then(() => loadData());
+setInterval(loadData, 3 * 60 * 1000);  // 每 3 分鐘重新抓
 
 function buildStoreTabs() {
   const el = document.getElementById('storeTabs');
