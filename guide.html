@@ -139,6 +139,7 @@ code { background: #f5f5f7; border-radius: 5px; padding: 2px 7px; font-family: '
       <li><span class="toc-badge badge-store">門市</span><a href="#s1">一、系統概覽</a></li>
       <li><span class="toc-badge badge-store">門市</span><a href="#s2">二、門市操作流程</a></li>
       <li><span class="toc-badge badge-store">門市</span><a href="#s3">三、商品類型填寫說明</a></li>
+      <li><span class="toc-badge badge-store">門市</span><a href="#s35">三之五、門市查詢頁面</a></li>
       <li><span class="toc-badge badge-bob">Bob</span><a href="#s4">四、訂購追蹤後台操作</a></li>
       <li><span class="toc-badge badge-bob">Bob</span><a href="#s5">五、狀態流程與等待天數</a></li>
       <li><span class="toc-badge badge-sys">維護</span><a href="#s6">六、系統架構與維護</a></li>
@@ -351,6 +352,48 @@ code { background: #f5f5f7; border-radius: 5px; padding: 2px 7px; font-family: '
         <span class="ico">📎</span>
         <div><strong>必附附件：</strong>①客製機截圖 ②客戶已結帳單據（含發票及訂購單）</div>
       </div>
+    </div>
+  </div>
+
+  <!-- ③.5 門市查詢頁面 -->
+  <div class="section" id="s35">
+    <div class="section-header">
+      <span class="section-icon">📊</span>
+      <h2>三之五、門市查詢頁面</h2>
+      <span class="audience aud-store">門市</span>
+    </div>
+
+    <div class="card">
+      <h3>不需登入的訂單追蹤頁</h3>
+      <p>門市可直接開啟以下連結，不需帳號密碼，即可查看自己門市的訂購狀態：</p>
+      <div class="link-row" style="margin-top:12px">
+        <a href="track.html" class="link-chip green" target="_blank">📊 開啟追蹤頁面</a>
+      </div>
+      <p style="margin-top:10px;font-size:12px;color:#6e6e73">連結：<code>https://harveyzxc15.github.io/studioa-order-form/track.html</code></p>
+    </div>
+
+    <div class="card">
+      <h3>頁面功能</h3>
+      <table>
+        <thead><tr><th>功能</th><th>說明</th></tr></thead>
+        <tbody>
+          <tr><td>門市分頁</td><td>點選上方門市名稱切換（士林/微風/美麗華/阿波羅/大葉高島屋/羅東）</td></tr>
+          <tr><td>狀態統計</td><td>顯示各門市待確認、已下單、出貨中、已到貨的數量</td></tr>
+          <tr><td>狀態篩選</td><td>可篩選僅顯示特定狀態的訂單</td></tr>
+          <tr><td>等待天數</td><td>綠色 &lt;7天 / 橘色 7-13天 / 紅色 ≥14天</td></tr>
+          <tr><td>更新時間</td><td>每天早上 09:00 自動更新（Bob 的 Mac 須在線）</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <h3>注意事項</h3>
+      <ul style="padding-left:18px;line-height:1.8">
+        <li>此頁面為<strong>唯讀</strong>，無法新增或修改資料</li>
+        <li>資料每天 09:00 由 Bob 的 Mac 自動推送更新</li>
+        <li>若資料未更新，表示當天 auto_scan 尚未執行（Mac 可能未開機）</li>
+        <li>頁面未更新？按 <kbd>⌘+Option+R</kbd> 強制重新整理</li>
+      </ul>
     </div>
   </div>
 
