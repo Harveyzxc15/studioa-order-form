@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <title>訂購狀態查詢</title>
+<script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { font-family: -apple-system, sans-serif; background: #f5f5f7; color: #1d1d1f; font-size: 14px; min-height: 100vh; }
@@ -118,14 +119,6 @@ body { font-family: -apple-system, sans-serif; background: #f5f5f7; color: #1d1d
 
 <script>
 const STORES = ['士林','微風','美麗華','阿波羅','大葉高島屋','羅東'];
-const NTFY_TOPICS = {
-  '士林':     'studioa-shlin-ntf7x3',
-  '微風':     'studioa-breeze-k2p8mq',
-  '美麗華':   'studioa-mira-r5j3nw',
-  '阿波羅':   'studioa-apollo-w9q1vz',
-  '大葉高島屋': 'studioa-tksh-m4d6yb',
-  '羅東':     'studioa-luodong-b8s2fp',
-};
 const STATUS_LABEL = {
   pending:   '⏳ 待採購確認',
   confirmed: '✅ 已下單',
@@ -147,36 +140,33 @@ let currentStatus = 'all';
 const urlStore = new URLSearchParams(location.search).get('store');
 if (urlStore && STORES.includes(urlStore)) currentStore = urlStore;
 
-// ── 通知功能 ──────────────────────────────────────────────
-const STORAGE_KEY = 'track_known_shipped';  // 已知出貨訂單 id 集合
-
-function getKnownShipped() {
-  try { return new Set(JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]')); }
-  catch { return new Set(); }
-}
-function saveKnownShipped(set) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify([...set]));
-}
-
-async function requestNotifyPermission() {
-  if (!('Notification' in window)) return;
-  if (Notification.permission === 'default') await Notification.requestPermission();
-}
-
-function checkNewShipped(orders) {
-  if (Notification.permission !== 'granted') return;
-  const known = getKnownShipped();
-  const newlyShipped = orders.filter(o => o.status === 'shipped' && !known.has(o.id));
-  newlyShipped.forEach(o => {
-    new Notification('🚚 訂單出貨中', {
-      body: `${o.store} ｜ ${o.product_name || o.stk_id}`,
-      icon: 'https://harveyzxc15.github.io/studioa-order-form/favicon.ico',
+// ── OneSignal Web Push ────────────────────────────────────
+const OS_APP_ID = 'a4c887b2-cd89-4aa0-847c-f34591050d3c';
+window.OneSignalDeferred = window.OneSignalDeferred || [];
+OneSignalDeferred.push(async function(OneSignal) {
+  try {
+    await OneSignal.init({
+      appId: OS_APP_ID,
+      serviceWorkerPath: 'OneSignalSDKWorker.js',
+      serviceWorkerParam: { scope: '/studioa-order-form/' },
+      promptOptions: {
+        slidedown: {
+          enabled: true,
+          actionMessage: '🚚 允許接收訂單出貨通知？',
+          acceptButton: '允許',
+          cancelButton: '稍後',
+        }
+      }
     });
-    known.add(o.id);
+    await OneSignal.User.addTag('store', currentStore);
+    renderNotifyBar();
+  } catch(e) { console.log('OneSignal:', e); }
+});
+
+function osTagStore(store) {
+  OneSignalDeferred.push(async function(OneSignal) {
+    try { await OneSignal.User.addTag('store', store); } catch(e) {}
   });
-  // 把到貨的訂單從已知集合移除（下次若重新出貨才不會漏）
-  orders.filter(o => o.status === 'arrived').forEach(o => known.delete(o.id));
-  saveKnownShipped(known);
 }
 
 // ── 資料載入 & 輪詢（每 3 分鐘） ─────────────────────────
@@ -186,7 +176,6 @@ function loadData() {
     .then(data => {
       allOrders = data.orders || [];
       document.getElementById('updatedAt').textContent = '更新時間：' + (data.updated_at || '—');
-      checkNewShipped(allOrders);
       buildStoreTabs();
       render();
     })
@@ -196,7 +185,7 @@ function loadData() {
     });
 }
 
-requestNotifyPermission().then(() => loadData());
+loadData();
 setInterval(loadData, 3 * 60 * 1000);  // 每 3 分鐘重新抓
 
 function buildStoreTabs() {
@@ -208,23 +197,23 @@ function buildStoreTabs() {
 }
 
 function renderNotifyBar() {
-  const topic = NTFY_TOPICS[currentStore];
-  if (!topic) return;
-  const ntfyUrl  = `https://ntfy.sh/${topic}`;
-  // iOS/Android 可直接用 app 打開訂閱連結
-  const appUrl   = `ntfy://${topic}`;
-  document.getElementById('notifyBar').innerHTML = `
-    <span class="txt">📲 訂閱推播通知，即使頁面未開啟也能收到出貨通知</span>
-    <div style="display:flex;gap:6px;flex-wrap:wrap">
-      <a class="notify-btn" href="${appUrl}">📱 手機 App 訂閱</a>
-      <a class="notify-btn" href="${ntfyUrl}" target="_blank" style="background:#3a3a3c">🌐 網頁訂閱</a>
-    </div>`;
+  document.getElementById('notifyBar').innerHTML =
+    `<span class="txt">📲 啟用後即使頁面未開啟也能收到出貨通知</span>
+     <button class="notify-btn" onclick="OneSignalDeferred.push(function(OS){OS.Notifications.requestPermission()})">🔔 啟用通知</button>`;
+  OneSignalDeferred.push(async function(OneSignal) {
+    if (OneSignal.User.PushSubscription.optedIn) {
+      document.getElementById('notifyBar').innerHTML =
+        `<span class="txt">🔔 已啟用出貨通知</span><span style="color:#34c759;font-size:12px;font-weight:600">✓ 已訂閱</span>`;
+    }
+  });
 }
 
 function setStore(store, el) {
   currentStore = store;
   document.querySelectorAll('.store-tab').forEach(t => t.classList.remove('active'));
   el.classList.add('active');
+  osTagStore(store);
+  renderNotifyBar();
   render();
 }
 
