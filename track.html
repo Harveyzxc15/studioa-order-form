@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<title>訂購狀態查詢</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, sans-serif; background: #f5f5f7; color: #1d1d1f; font-size: 14px; min-height: 100vh; }
+
+.header { background: #1d1d1f; color: #fff; padding: 14px 20px; display: flex; align-items: center; justify-content: space-between; }
+.header h1 { font-size: 17px; font-weight: 600; }
+.header .updated { font-size: 11px; color: #6e6e73; }
+
+.container { max-width: 900px; margin: 0 auto; padding: 20px 16px 60px; }
+
+/* 門市選單 */
+.store-tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 16px; }
+.store-tab { padding: 7px 16px; border-radius: 20px; border: 1.5px solid #d1d1d6;
+             background: #fff; cursor: pointer; font-size: 13px; font-weight: 500;
+             color: #3a3a3c; transition: all .15s; }
+.store-tab:hover { border-color: #0071e3; color: #0071e3; }
+.store-tab.active { border-color: #0071e3; background: #0071e3; color: #fff; }
+
+/* 統計列 */
+.mini-stats { display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; }
+.mini-stat { background: #fff; border-radius: 10px; padding: 10px 16px; flex: 1; min-width: 80px;
+             box-shadow: 0 1px 3px rgba(0,0,0,.07); text-align: center; }
+.mini-stat .num { font-size: 22px; font-weight: 700; }
+.mini-stat .lbl { font-size: 11px; color: #6e6e73; margin-top: 2px; }
+.s-pending  .num { color: #ff9500; }
+.s-confirm  .num { color: #0071e3; }
+.s-shipped  .num { color: #5856d6; }
+.s-arrived  .num { color: #34c759; }
+
+/* 篩選 */
+.status-filters { display: flex; gap: 6px; margin-bottom: 14px; flex-wrap: wrap; }
+.sf { padding: 5px 12px; border-radius: 20px; border: 1.5px solid #d1d1d6;
+      background: #fff; cursor: pointer; font-size: 12px; color: #3a3a3c; }
+.sf.active { border-color: #0071e3; background: #0071e3; color: #fff; }
+
+/* 卡片列表 */
+.order-list { display: flex; flex-direction: column; gap: 10px; }
+.order-card { background: #fff; border-radius: 12px; padding: 14px 16px;
+              box-shadow: 0 1px 3px rgba(0,0,0,.07); border-left: 4px solid #d1d1d6; }
+.order-card.s-pending  { border-left-color: #ff9500; }
+.order-card.s-confirmed{ border-left-color: #0071e3; }
+.order-card.s-shipped  { border-left-color: #5856d6; }
+.order-card.s-arrived  { border-left-color: #34c759; }
+
+.card-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; margin-bottom: 8px; }
+.product-name { font-size: 14px; font-weight: 600; flex: 1; }
+.badge { display: inline-flex; align-items: center; gap: 3px; padding: 3px 10px;
+         border-radius: 20px; font-size: 12px; font-weight: 600; white-space: nowrap; }
+.badge-pending   { background: #fff3e0; color: #e65100; }
+.badge-confirmed { background: #e3f2fd; color: #1565c0; }
+.badge-shipped   { background: #ede7f6; color: #4527a0; }
+.badge-arrived   { background: #e8f5e9; color: #1b5e20; }
+
+.card-meta { display: flex; gap: 12px; flex-wrap: wrap; font-size: 12px; color: #6e6e73; }
+.meta-item strong { color: #3a3a3c; }
+
+.wait-chip { display: inline-block; font-size: 12px; font-weight: 700; padding: 2px 8px; border-radius: 6px; }
+.wait-short { background: #e8f5e9; color: #1b5e20; }
+.wait-mid   { background: #fff3e0; color: #e65100; }
+.wait-long  { background: #ffebee; color: #b71c1c; }
+
+.empty { text-align: center; padding: 50px 20px; color: #6e6e73; }
+.empty .ico { font-size: 36px; margin-bottom: 10px; }
+
+.type-tag { display: inline-block; padding: 1px 7px; border-radius: 4px; font-size: 11px; font-weight: 600; }
+.type-CTO    { background: #fce4ec; color: #880e4f; }
+.type-iPad   { background: #e8eaf6; color: #283593; }
+.type-normal { background: #e0f7fa; color: #006064; }
+
+.loading { text-align: center; padding: 60px; color: #6e6e73; font-size: 15px; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>📦 訂購狀態查詢</h1>
+  <span class="updated" id="updatedAt">載入中…</span>
+</div>
+
+<div class="container">
+
+  <!-- 門市選單 -->
+  <div class="store-tabs" id="storeTabs"></div>
+
+  <!-- 統計 -->
+  <div class="mini-stats" id="miniStats"></div>
+
+  <!-- 狀態篩選 -->
+  <div class="status-filters">
+    <div class="sf active" data-s="all"       onclick="setStatus('all',this)">全部</div>
+    <div class="sf"        data-s="pending"   onclick="setStatus('pending',this)">⏳ 待確認</div>
+    <div class="sf"        data-s="confirmed" onclick="setStatus('confirmed',this)">✅ 已下單</div>
+    <div class="sf"        data-s="shipped"   onclick="setStatus('shipped',this)">🚚 出貨中</div>
+    <div class="sf"        data-s="arrived"   onclick="setStatus('arrived',this)">🏪 已到貨</div>
+  </div>
+
+  <!-- 訂單列表 -->
+  <div class="order-list" id="orderList">
+    <div class="loading">🔄 載入資料中…</div>
+  </div>
+
+</div>
+
+<script>
+const STORES = ['士林','微風','美麗華','阿波羅','大葉高島屋','羅東'];
+const STATUS_LABEL = {
+  pending:   '⏳ 待採購確認',
+  confirmed: '✅ 已下單',
+  shipped:   '🚚 出貨中',
+  arrived:   '🏪 已到貨',
+};
+const STATUS_BADGE = {
+  pending:   'badge-pending',
+  confirmed: 'badge-confirmed',
+  shipped:   'badge-shipped',
+  arrived:   'badge-arrived',
+};
+
+let allOrders = [];
+let currentStore  = STORES[0];
+let currentStatus = 'all';
+
+// 偵測 URL 參數決定預設門市
+const urlStore = new URLSearchParams(location.search).get('store');
+if (urlStore && STORES.includes(urlStore)) currentStore = urlStore;
+
+fetch('data.json?t=' + Date.now())
+  .then(r => r.json())
+  .then(data => {
+    allOrders = data.orders || [];
+    document.getElementById('updatedAt').textContent = '更新時間：' + (data.updated_at || '—');
+    buildStoreTabs();
+    render();
+  })
+  .catch(() => {
+    document.getElementById('orderList').innerHTML =
+      '<div class="empty"><div class="ico">⚠️</div><div>資料載入失敗，請稍後再試</div></div>';
+  });
+
+function buildStoreTabs() {
+  const el = document.getElementById('storeTabs');
+  el.innerHTML = STORES.map(s =>
+    `<div class="store-tab${s===currentStore?' active':''}" onclick="setStore('${s}',this)">${s}</div>`
+  ).join('');
+}
+
+function setStore(store, el) {
+  currentStore = store;
+  document.querySelectorAll('.store-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  render();
+}
+
+function setStatus(status, el) {
+  currentStatus = status;
+  document.querySelectorAll('.sf').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  render();
+}
+
+function render() {
+  let orders = allOrders.filter(o => o.store === currentStore);
+
+  // 統計
+  const cnt = { pending:0, confirmed:0, shipped:0, arrived:0 };
+  orders.forEach(o => cnt[o.status] = (cnt[o.status]||0) + 1);
+  document.getElementById('miniStats').innerHTML = `
+    <div class="mini-stat s-pending"><div class="num">${cnt.pending}</div><div class="lbl">⏳ 待確認</div></div>
+    <div class="mini-stat s-confirm"><div class="num">${cnt.confirmed}</div><div class="lbl">✅ 已下單</div></div>
+    <div class="mini-stat s-shipped"><div class="num">${cnt.shipped}</div><div class="lbl">🚚 出貨中</div></div>
+    <div class="mini-stat s-arrived"><div class="num">${cnt.arrived}</div><div class="lbl">🏪 已到貨</div></div>
+  `;
+
+  // 篩選狀態
+  if (currentStatus !== 'all') orders = orders.filter(o => o.status === currentStatus);
+
+  const el = document.getElementById('orderList');
+  if (!orders.length) {
+    el.innerHTML = '<div class="empty"><div class="ico">📭</div><div>目前沒有符合的記錄</div></div>';
+    return;
+  }
+
+  el.innerHTML = orders.map(o => {
+    const typeClass = o.order_type === 'CTO' ? 'type-CTO'
+                    : o.order_type.includes('iPad') ? 'type-iPad' : 'type-normal';
+    const waitHtml = o.wait_days !== null && o.status !== 'arrived'
+      ? `<span class="wait-chip ${o.wait_days>=14?'wait-long':o.wait_days>=7?'wait-mid':'wait-short'}">等待 ${o.wait_days} 個工作天</span>`
+      : o.status === 'arrived' && o.wait_days !== null
+        ? `<span style="font-size:12px;color:#6e6e73">共等 ${o.wait_days} 個工作天</span>` : '';
+
+    return `
+    <div class="order-card s-${o.status}">
+      <div class="card-top">
+        <div class="product-name">${o.product_name || '—'}</div>
+        <span class="badge ${STATUS_BADGE[o.status]}">${STATUS_LABEL[o.status]}</span>
+      </div>
+      <div class="card-meta">
+        <span><strong>日期</strong> ${o.email_date}</span>
+        ${o.stk_id ? `<span><strong>存貨代碼</strong> ${o.stk_id}</span>` : ''}
+        <span><strong>數量</strong> ${o.qty}</span>
+        <span><span class="type-tag ${typeClass}">${o.order_type}</span></span>
+        ${o.confirmed_at ? `<span><strong>下單日</strong> ${o.confirmed_at}</span>` : ''}
+        ${o.arrived_at   ? `<span><strong>到貨日</strong> ${o.arrived_at}</span>` : ''}
+        ${waitHtml}
+      </div>
+    </div>`;
+  }).join('');
+}
+</script>
+</body>
+</html>
