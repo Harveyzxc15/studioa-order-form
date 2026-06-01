@@ -18,6 +18,15 @@ body { font-family: -apple-system, sans-serif; background: #f5f5f7; color: #1d1d
 
 .container { max-width: 1140px; margin: 30px auto; padding: 0 20px 60px; }
 .manager-warn { background: #fff3e0; color: #e65100; border: 1.5px solid #ffb74d; border-radius: 12px; padding: 14px 18px; margin-bottom: 16px; font-size: 14px; line-height: 1.6; }
+.changelog-card { background: #fff; border-radius: 14px; padding: 16px 20px; box-shadow: 0 1px 4px rgba(0,0,0,.08); }
+.changelog-card h2 { font-size: 15px; font-weight: 600; color: #1d1d1f; margin-bottom: 14px; }
+.changelog-entry { margin-bottom: 16px; }
+.changelog-entry:last-child { margin-bottom: 0; }
+.changelog-ver { font-size: 12px; font-weight: 700; color: #0071e3; margin-bottom: 8px; }
+.changelog-list { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+.changelog-list li { font-size: 12.5px; line-height: 1.5; color: #3a3a3c; display: flex; gap: 7px; }
+.changelog-list .tag-new { color: #1b5e20; font-weight: 700; flex-shrink: 0; }
+.changelog-list .tag-fix { color: #e65100; font-weight: 700; flex-shrink: 0; }
 .two-col { display: flex; gap: 20px; align-items: flex-start; }
 .col-left { flex: 1; min-width: 0; }
 .col-right { flex: 1; min-width: 0; }
@@ -132,7 +141,7 @@ textarea { min-height: 70px; resize: vertical; }
     <p>STUDIO A 北一區門市 ｜ 填寫完成後產生信件，確認內容再發送</p>
   </div>
   <div style="text-align:right">
-    <span class="version-badge">v1.2</span>
+    <span class="version-badge">v1.3</span>
     <div style="margin-top:5px;display:flex;flex-direction:column;gap:2px;align-items:flex-end">
       <a href="guide.html" style="font-size:11px;color:#a1a1a6;text-decoration:none">📖 使用指南</a>
       <a href="track.html" style="font-size:15px;color:#a1a1a6;text-decoration:none">📊 追蹤查詢</a>
@@ -228,6 +237,22 @@ textarea { min-height: 70px; resize: vertical; }
 
     </div><!-- /guide-body -->
   </div><!-- /guide-card -->
+
+  <!-- ── 更新紀錄 ── -->
+  <div class="changelog-card" style="margin-top:16px">
+    <h2>🔄 更新紀錄</h2>
+    <div class="changelog-entry">
+      <div class="changelog-ver">2026/06/01 · v1.3</div>
+      <ul class="changelog-list">
+        <li><span class="tag-new">新增</span><span>版面改為左右並排：說明在左、表單在右，不再收折</span></li>
+        <li><span class="tag-new">新增</span><span>送出前加入店長核對提醒與確認</span></li>
+        <li><span class="tag-new">新增</span><span>追蹤查詢頁可一鍵返回表單</span></li>
+        <li><span class="tag-fix">修正</span><span>訂單類型更名：原廠需求 / 高容量、CEL / CTO</span></li>
+        <li><span class="tag-fix">修正</span><span>後台信件解析，正確抓取商品名稱與存貨代碼</span></li>
+        <li><span class="tag-fix">修正</span><span>出貨 / 到貨狀態自動偵測（後台追蹤）</span></li>
+      </ul>
+    </div>
+  </div>
 
   </div><!-- /col-left -->
   <div class="col-right">
