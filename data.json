@@ -1,4 +1,18 @@
 {
-  "updated_at": "2026-06-01 22:06",
-  "orders": []
+  "updated_at": "2026-06-01 22:08",
+  "orders": [
+    {
+      "id": 158,
+      "email_date": "2026-06-01",
+      "store": "微風",
+      "order_type": "原廠需求",
+      "stk_id": "",
+      "product_name": "20260601微風門市原廠商品/客製機需求",
+      "qty": 1,
+      "status": "pending",
+      "wait_days": null,
+      "confirmed_at": null,
+      "arrived_at": null
+    }
+  ]
 }
