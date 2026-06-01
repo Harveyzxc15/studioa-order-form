@@ -1,13 +1,13 @@
 {
-  "updated_at": "2026-06-01 22:08",
+  "updated_at": "2026-06-01 22:15",
   "orders": [
     {
-      "id": 158,
+      "id": 159,
       "email_date": "2026-06-01",
       "store": "微風",
       "order_type": "原廠需求",
-      "stk_id": "",
-      "product_name": "20260601微風門市原廠商品/客製機需求",
+      "stk_id": "07313162",
+      "product_name": "MHWM4TA/A AIRPODS MAX 2 BLUE-TWN",
       "qty": 1,
       "status": "pending",
       "wait_days": null,
