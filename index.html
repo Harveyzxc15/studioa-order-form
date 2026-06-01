@@ -16,7 +16,7 @@ body { font-family: -apple-system, sans-serif; background: #f5f5f7; color: #1d1d
 .header-left p { font-size: 12px; color: #a1a1a6; margin-top: 3px; }
 .version-badge { background: #3a3a3c; color: #a1a1a6; font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 20px; white-space: nowrap; letter-spacing: .3px; flex-shrink: 0; }
 
-.container { max-width: 1140px; margin: 30px auto; padding: 0 20px 60px; }
+.container { max-width: 1440px; margin: 30px auto; padding: 0 20px 60px; }
 .manager-warn { background: #fff3e0; color: #e65100; border: 1.5px solid #ffb74d; border-radius: 12px; padding: 14px 18px; margin-bottom: 16px; font-size: 14px; line-height: 1.6; }
 .changelog-card { background: #fff; border-radius: 14px; padding: 16px 20px; box-shadow: 0 1px 4px rgba(0,0,0,.08); }
 .changelog-card h2 { font-size: 15px; font-weight: 600; color: #1d1d1f; margin-bottom: 14px; }
@@ -28,8 +28,10 @@ body { font-family: -apple-system, sans-serif; background: #f5f5f7; color: #1d1d
 .changelog-list .tag-new { color: #1b5e20; font-weight: 700; flex-shrink: 0; }
 .changelog-list .tag-fix { color: #e65100; font-weight: 700; flex-shrink: 0; }
 .two-col { display: flex; gap: 20px; align-items: flex-start; }
+.col-changelog { flex: 0 0 230px; min-width: 0; }
 .col-left { flex: 1; min-width: 0; }
 .col-right { flex: 1; min-width: 0; }
+@media (max-width: 1100px) { .two-col { flex-wrap: wrap; } .col-changelog { flex-basis: 100%; order: 3; } }
 @media (max-width: 860px) { .two-col { flex-direction: column; } }
 
 .card { background: #fff; border-radius: 14px; padding: 24px; margin-bottom: 16px; box-shadow: 0 1px 4px rgba(0,0,0,.08); }
@@ -152,6 +154,25 @@ textarea { min-height: 70px; resize: vertical; }
 
 <div class="container">
  <div class="two-col">
+
+  <!-- ── 更新紀錄（最左欄）── -->
+  <div class="col-changelog">
+    <div class="changelog-card">
+      <h2>🔄 更新紀錄</h2>
+      <div class="changelog-entry">
+        <div class="changelog-ver">2026/06/01 · v1.3</div>
+        <ul class="changelog-list">
+          <li><span class="tag-new">新增</span><span>版面改為左右並排：說明在左、表單在右，不再收折</span></li>
+          <li><span class="tag-new">新增</span><span>送出前加入店長核對提醒與確認</span></li>
+          <li><span class="tag-new">新增</span><span>追蹤查詢頁可一鍵返回表單</span></li>
+          <li><span class="tag-fix">修正</span><span>訂單類型更名：原廠需求 / 高容量、CEL / CTO</span></li>
+          <li><span class="tag-fix">修正</span><span>後台信件解析，正確抓取商品名稱與存貨代碼</span></li>
+          <li><span class="tag-fix">修正</span><span>出貨 / 到貨狀態自動偵測（後台追蹤）</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
   <div class="col-left">
 
   <!-- ── 說明白皮書 ── -->
@@ -237,22 +258,6 @@ textarea { min-height: 70px; resize: vertical; }
 
     </div><!-- /guide-body -->
   </div><!-- /guide-card -->
-
-  <!-- ── 更新紀錄 ── -->
-  <div class="changelog-card" style="margin-top:16px">
-    <h2>🔄 更新紀錄</h2>
-    <div class="changelog-entry">
-      <div class="changelog-ver">2026/06/01 · v1.3</div>
-      <ul class="changelog-list">
-        <li><span class="tag-new">新增</span><span>版面改為左右並排：說明在左、表單在右，不再收折</span></li>
-        <li><span class="tag-new">新增</span><span>送出前加入店長核對提醒與確認</span></li>
-        <li><span class="tag-new">新增</span><span>追蹤查詢頁可一鍵返回表單</span></li>
-        <li><span class="tag-fix">修正</span><span>訂單類型更名：原廠需求 / 高容量、CEL / CTO</span></li>
-        <li><span class="tag-fix">修正</span><span>後台信件解析，正確抓取商品名稱與存貨代碼</span></li>
-        <li><span class="tag-fix">修正</span><span>出貨 / 到貨狀態自動偵測（後台追蹤）</span></li>
-      </ul>
-    </div>
-  </div>
 
   </div><!-- /col-left -->
   <div class="col-right">
