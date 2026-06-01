@@ -142,8 +142,11 @@ if (urlStore && STORES.includes(urlStore)) currentStore = urlStore;
 
 // ── OneSignal Web Push ────────────────────────────────────
 const OS_APP_ID = 'a4c887b2-cd89-4aa0-847c-f34591050d3c';
+window.__osLog = function(m){ try{ document.title = 'OS:'+m; window.__os = (window.__os||'')+m+' | '; }catch(e){} };
 window.OneSignalDeferred = window.OneSignalDeferred || [];
+window.__osLog('deferred-set');
 OneSignalDeferred.push(async function(OneSignal) {
+  window.__osLog('callback-run');
   try {
     await OneSignal.init({
       appId: OS_APP_ID,
@@ -158,9 +161,13 @@ OneSignalDeferred.push(async function(OneSignal) {
         }
       }
     });
+    window.__osLog('init-done');
     await OneSignal.User.addTag('store', currentStore);
+    window.__osLog('tagged');
+    await OneSignal.Notifications.requestPermission();
+    window.__osLog('opted:'+OneSignal.User.PushSubscription.optedIn+',id:'+OneSignal.User.PushSubscription.id);
     renderNotifyBar();
-  } catch(e) { console.log('OneSignal:', e); }
+  } catch(e) { window.__osLog('ERR:'+(e&&e.message?e.message:String(e))); }
 });
 
 function osTagStore(store) {
