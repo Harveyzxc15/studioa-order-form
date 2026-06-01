@@ -140,37 +140,19 @@ let currentStatus = 'all';
 const urlStore = new URLSearchParams(location.search).get('store');
 if (urlStore && STORES.includes(urlStore)) currentStore = urlStore;
 
-// ── OneSignal Web Push ────────────────────────────────────
+// ── OneSignal Web Push（暫停使用：GitHub Pages 子目錄與 OneSignal 不相容，待改用根目錄或自建 web push）──
 const OS_APP_ID = 'a4c887b2-cd89-4aa0-847c-f34591050d3c';
-window.__osLog = function(m){ try{ document.title = 'OS:'+m; window.__os = (window.__os||'')+m+' | '; }catch(e){} };
-window.addEventListener('error', function(e){ window.__osLog('WERR:'+(e.message||'')+'@'+(e.filename||'').slice(-30)+':'+(e.lineno||'')); });
-window.addEventListener('unhandledrejection', function(e){ window.__osLog('REJ:'+String(e.reason).slice(0,120)); });
 window.OneSignalDeferred = window.OneSignalDeferred || [];
-window.__osLog('deferred-set');
 OneSignalDeferred.push(async function(OneSignal) {
-  window.__osLog('callback-run');
   try {
-    try { OneSignal.Debug.setLogLevel('trace'); } catch(e){}
-    var initP = OneSignal.init({
+    await OneSignal.init({
       appId: OS_APP_ID,
       serviceWorkerPath: 'studioa-order-form/OneSignalSDKWorker.js',
       serviceWorkerParam: { scope: '/studioa-order-form/' }
     });
-    var timeoutP = new Promise(function(res){ setTimeout(function(){ res('__TIMEOUT__'); }, 12000); });
-    var winner = await Promise.race([ initP.then(function(){return '__OK__';}), timeoutP ]);
-    if (winner === '__TIMEOUT__') {
-      var st = 'TIMEOUT';
-      try { st += ' perm='+OneSignal.Notifications.permission; } catch(e){ st+=' perm-err'; }
-      try { st += ' optedIn='+OneSignal.User.PushSubscription.optedIn; } catch(e){ st+=' opt-err'; }
-      window.__osLog(st);
-      return;
-    }
-    window.__osLog('init-done');
     await OneSignal.User.addTag('store', currentStore);
-    await OneSignal.Notifications.requestPermission();
-    window.__osLog('opted:'+OneSignal.User.PushSubscription.optedIn+',id:'+OneSignal.User.PushSubscription.id);
     renderNotifyBar();
-  } catch(e) { window.__osLog('ERR:'+(e&&e.message?e.message:String(e))); }
+  } catch(e) { /* push 暫不可用，不影響頁面其他功能 */ }
 });
 
 function osTagStore(store) {
