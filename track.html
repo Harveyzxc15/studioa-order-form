@@ -151,7 +151,11 @@ OneSignalDeferred.push(async function(OneSignal) {
   window.__osLog('callback-run');
   try {
     try { OneSignal.Debug.setLogLevel('trace'); } catch(e){}
-    var initP = OneSignal.init({ appId: OS_APP_ID });
+    var initP = OneSignal.init({
+      appId: OS_APP_ID,
+      serviceWorkerPath: 'studioa-order-form/OneSignalSDKWorker.js',
+      serviceWorkerParam: { scope: '/studioa-order-form/' }
+    });
     var timeoutP = new Promise(function(res){ setTimeout(function(){ res('__TIMEOUT__'); }, 12000); });
     var winner = await Promise.race([ initP.then(function(){return '__OK__';}), timeoutP ]);
     if (winner === '__TIMEOUT__') {
