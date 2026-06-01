@@ -248,7 +248,7 @@ function render() {
 
   el.innerHTML = orders.map(o => {
     const typeClass = o.order_type === 'CTO' ? 'type-CTO'
-                    : o.order_type.includes('iPad') ? 'type-iPad' : 'type-normal';
+                    : (o.order_type.includes('高容量') || o.order_type.includes('CEL') || o.order_type.includes('iPad')) ? 'type-iPad' : 'type-normal';
     const waitHtml = o.wait_days !== null && o.status !== 'arrived'
       ? `<span class="wait-chip ${o.wait_days>=14?'wait-long':o.wait_days>=7?'wait-mid':'wait-short'}">等待 ${o.wait_days} 個工作天</span>`
       : o.status === 'arrived' && o.wait_days !== null

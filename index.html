@@ -189,17 +189,17 @@ textarea { min-height: 70px; resize: vertical; }
         <h3>商品類型說明</h3>
         <div class="type-grid">
           <div class="type-box t-normal">
-            <strong>🛒 原廠商品</strong>
+            <strong>🛒 原廠需求</strong>
             一般庫存商品，需填寫存貨代碼、商品名稱、數量、單價及訂金狀態。
             <span class="tag">有存貨代碼</span>
           </div>
           <div class="type-box t-ipad">
-            <strong>📱 iPad 高容量</strong>
+            <strong>📱 高容量/CEL</strong>
             iPad Pro 512G/1TB/2TB、iPad Air 512G/1TB、CEL 版 iPad，須附結帳單據。
             <span class="tag">有存貨代碼</span><span class="tag">需附件</span>
           </div>
           <div class="type-box t-cto">
-            <strong>⚙️ CTO 客製機</strong>
+            <strong>⚙️ CTO</strong>
             Apple 官網客製化規格，需填原存貨代碼、規格、客製後網址，須附截圖及結帳單據。
             <span class="tag">需附件</span>
           </div>
@@ -409,9 +409,9 @@ function addItem() {
       <button class="btn-remove" onclick="removeItem(${itemCount})" type="button">✕ 移除</button>
     </div>
     <div class="type-tabs">
-      <div class="type-tab" onclick="setItemType(${itemCount},'normal',this)">🛒 原廠商品</div>
-      <div class="type-tab" onclick="setItemType(${itemCount},'ipad',this)">📱 iPad 高容量</div>
-      <div class="type-tab" onclick="setItemType(${itemCount},'cto',this)">⚙️ CTO 客製機</div>
+      <div class="type-tab" onclick="setItemType(${itemCount},'normal',this)">🛒 原廠需求</div>
+      <div class="type-tab" onclick="setItemType(${itemCount},'ipad',this)">📱 高容量/CEL</div>
+      <div class="type-tab" onclick="setItemType(${itemCount},'cto',this)">⚙️ CTO</div>
     </div>
     <div class="item-fields" id="fields-${itemCount}"></div>
   `;
@@ -483,7 +483,7 @@ function generateEmail() {
             dep = getField(f,'deposit'), note = getField(f,'note');
       if (!stk || !pname || !price) { alert(`商品 ${idx+1}：請填寫所有必填欄位`); hasError = true; return; }
       if (!/^\d{8}$/.test(stk)) { alert(`商品 ${idx+1}：存貨代碼須為 8 碼數字`); hasError = true; return; }
-      let s = `${num}、原廠商品\n存貨代碼：${stk}\n商品名稱：${pname}\n數量：${qty}\n單價：${price}\n是否已收訂金：${dep}`;
+      let s = `${num}、原廠需求\n存貨代碼：${stk}\n商品名稱：${pname}\n數量：${qty}\n單價：${price}\n是否已收訂金：${dep}`;
       if (note) s += `\n備註：${note}`;
       sections.push(s);
     }
@@ -492,7 +492,7 @@ function generateEmail() {
             qty = getField(f,'qty'), dep = getField(f,'deposit'), note = getField(f,'note');
       if (!stk || !pname) { alert(`商品 ${idx+1}：請填寫所有必填欄位`); hasError = true; return; }
       if (!/^\d{8}$/.test(stk)) { alert(`商品 ${idx+1}：存貨代碼須為 8 碼數字`); hasError = true; return; }
-      let s = `${num}、iPad 高容量\n存貨代碼：${stk}\n商品名稱：${pname}\n數量：${qty}\n是否已收訂金：${dep}`;
+      let s = `${num}、高容量/CEL\n存貨代碼：${stk}\n商品名稱：${pname}\n數量：${qty}\n是否已收訂金：${dep}`;
       if (note) s += `\n備註：${note}`;
       s += `\n\n附件：\n1. 客戶已結帳單據（含發票及訂購單）`;
       sections.push(s);
