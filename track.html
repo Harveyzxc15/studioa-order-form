@@ -150,8 +150,6 @@ OneSignalDeferred.push(async function(OneSignal) {
   try {
     await OneSignal.init({
       appId: OS_APP_ID,
-      serviceWorkerPath: 'studioa-order-form/OneSignalSDKWorker.js',
-      serviceWorkerParam: { scope: '/studioa-order-form/' },
       promptOptions: {
         slidedown: {
           enabled: true,
