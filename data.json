@@ -1,6 +1,19 @@
 {
-  "updated_at": "2026-06-02 02:35",
+  "updated_at": "2026-06-02 12:54",
   "orders": [
+    {
+      "id": 163,
+      "email_date": "2026-06-02",
+      "store": "阿波羅",
+      "order_type": "原廠需求",
+      "stk_id": "07313160",
+      "product_name": "MHWK4TA/A AIRPODS MAX 2 MIDNIGHT-TWN",
+      "qty": 1,
+      "status": "pending",
+      "wait_days": null,
+      "confirmed_at": null,
+      "arrived_at": null
+    },
     {
       "id": 159,
       "email_date": "2026-06-01",
