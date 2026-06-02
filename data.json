@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-06-02 23:31",
+  "updated_at": "2026-06-03 01:32",
   "orders": [
     {
       "id": 163,
@@ -36,7 +36,7 @@
       "product_name": "MDHF4TA/A MBA 13.6/M5/MDN/10C GPU/16GB/1TB-TWN",
       "qty": 1,
       "status": "shipped",
-      "wait_days": 1,
+      "wait_days": 2,
       "confirmed_at": "2026-06-01",
       "arrived_at": null
     }
