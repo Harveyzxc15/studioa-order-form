@@ -149,7 +149,7 @@ textarea { min-height: 70px; resize: vertical; }
     <p>STUDIO A 北一區門市 ｜ 填寫完成後產生信件，確認內容再發送</p>
   </div>
   <div style="text-align:right">
-    <span class="version-badge" onclick="openChangelog()" title="點我看更新紀錄">v1.4</span>
+    <span class="version-badge" onclick="openChangelog()" title="點我看更新紀錄">v1.5</span>
     <div style="margin-top:6px;display:flex;flex-direction:column;gap:6px;align-items:flex-end">
       <a href="guide.html" style="font-size:14px;color:#d1d1d6;text-decoration:none">📖 使用指南</a>
       <a href="track.html" style="font-size:14px;color:#d1d1d6;text-decoration:none">📊 追蹤查詢</a>
@@ -165,6 +165,12 @@ textarea { min-height: 70px; resize: vertical; }
     <div class="modal-head">
       <h2>🔄 更新紀錄</h2>
       <button class="modal-close" onclick="closeChangelog()">✕</button>
+    </div>
+    <div class="changelog-entry">
+      <div class="changelog-ver">2026/06/02 · v1.5</div>
+      <ul class="changelog-list">
+        <li><span class="tag-fix">調整</span><span>高容量/CEL 與 CTO 的訂金固定為「已全額付清」，不可更改</span></li>
+      </ul>
     </div>
     <div class="changelog-entry">
       <div class="changelog-ver">2026/06/01 · v1.4</div>
@@ -380,11 +386,8 @@ textarea { min-height: 70px; resize: vertical; }
     </div>
     <div class="form-group">
       <label>是否已收訂金 <span class="req">*</span></label>
-      <select name="deposit">
-        <option>已全額付清</option>
-        <option>已收部分訂金</option>
-        <option>未結清</option>
-      </select>
+      <input type="text" name="deposit" value="已全額付清" readonly
+             style="background:#f0f0f2;color:#6e6e73;cursor:not-allowed" title="高容量/CEL 一律全額付清">
     </div>
   </div>
   <div class="form-group">
@@ -421,6 +424,11 @@ textarea { min-height: 70px; resize: vertical; }
     <label>客製點選完畢後網址 <span class="req">*</span></label>
     <input type="text" name="url" placeholder="https://www.apple.com/...">
     <p class="hint">在 Apple 官網設定好規格後，複製網址貼上</p>
+  </div>
+  <div class="form-group">
+    <label>是否已收訂金 <span class="req">*</span></label>
+    <input type="text" name="deposit" value="已全額付清" readonly
+           style="background:#f0f0f2;color:#6e6e73;cursor:not-allowed" title="CTO 客製機一律全額付清">
   </div>
   <div class="form-group">
     <label>備註</label>
@@ -563,7 +571,7 @@ function generateEmail() {
         alert(`商品 ${idx+1}：請填寫所有必填欄位`); hasError = true; return;
       }
       if (!/^\d{8}$/.test(stk)) { alert(`商品 ${idx+1}：存貨代碼須為 8 碼數字`); hasError = true; return; }
-      let s = `${num}、CTO 客製機\n原存貨代碼：${stk}\n原產品名稱：${pname}\n原價：${price}\n客製規格：${specs}\n客製後價格：${newprice}\n客製點選完畢後網址：${url}`;
+      let s = `${num}、CTO 客製機\n原存貨代碼：${stk}\n原產品名稱：${pname}\n原價：${price}\n客製規格：${specs}\n客製後價格：${newprice}\n客製點選完畢後網址：${url}\n是否已收訂金：已全額付清`;
       if (note) s += `\n備註：${note}`;
       s += `\n\n附件：\n1. 客製機截圖\n2. 客戶已結帳單據（含發票及訂購單）`;
       sections.push(s);
