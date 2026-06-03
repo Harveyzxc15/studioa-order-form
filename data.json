@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-06-04 00:12",
+  "updated_at": "2026-06-04 00:16",
   "orders": [
     {
       "id": 163,
@@ -12,7 +12,9 @@
       "status": "pending",
       "wait_days": null,
       "confirmed_at": null,
-      "arrived_at": null
+      "arrived_at": null,
+      "reply": null,
+      "reply_date": null
     },
     {
       "id": 159,
@@ -25,7 +27,9 @@
       "status": "shipped",
       "wait_days": 1,
       "confirmed_at": "2026-06-03",
-      "arrived_at": null
+      "arrived_at": null,
+      "reply": "總倉有貨，本週隨貨寄出～   Clare",
+      "reply_date": "2026-06-03"
     }
   ]
 }
