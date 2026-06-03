@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-06-03 15:58",
+  "updated_at": "2026-06-03 16:30",
   "orders": [
     {
       "id": 163,
@@ -24,7 +24,7 @@
       "stk_id": "07313162",
       "product_name": "MHWM4TA/A AIRPODS MAX 2 BLUE-TWN",
       "qty": 1,
-      "status": "confirmed",
+      "status": "shipped",
       "wait_days": 0,
       "confirmed_at": "2026-06-03",
       "arrived_at": null,
