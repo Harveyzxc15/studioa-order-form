@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-06-03 15:08",
+  "updated_at": "2026-06-03 15:33",
   "orders": [
     {
       "id": 163,
@@ -26,19 +26,6 @@
       "wait_days": null,
       "confirmed_at": null,
       "arrived_at": null
-    },
-    {
-      "id": 162,
-      "email_date": "2026-06-01",
-      "store": "阿波羅",
-      "order_type": "原廠需求",
-      "stk_id": "07313101",
-      "product_name": "MDHF4TA/A MBA 13.6/M5/MDN/10C GPU/16GB/1TB-TWN",
-      "qty": 1,
-      "status": "arrived",
-      "wait_days": 2,
-      "confirmed_at": "2026-06-01",
-      "arrived_at": "2026-06-03"
     }
   ]
 }
