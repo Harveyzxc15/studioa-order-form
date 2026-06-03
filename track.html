@@ -65,6 +65,7 @@ body { font-family: -apple-system, sans-serif; background: #f5f5f7; color: #1d1d
 .badge-arrived   { background: #e8f5e9; color: #1b5e20; }
 
 .card-meta { display: flex; gap: 12px; flex-wrap: wrap; font-size: 12px; color: #6e6e73; }
+.reply-box { margin-top: 10px; background: #f0f7ff; border-left: 3px solid #0071e3; border-radius: 8px; padding: 8px 12px; font-size: 13px; color: #1565c0; line-height: 1.5; }
 .meta-item strong { color: #3a3a3c; }
 
 .wait-chip { display: inline-block; font-size: 12px; font-weight: 700; padding: 2px 8px; border-radius: 6px; }
@@ -264,6 +265,7 @@ function render() {
         ${o.arrived_at   ? `<span><strong>到貨日</strong> ${o.arrived_at}</span>` : ''}
         ${waitHtml}
       </div>
+      ${o.reply ? `<div class="reply-box">💬 採購回覆${o.reply_date ? `（${o.reply_date}）` : ''}：${o.reply}</div>` : ''}
     </div>`;
   }).join('');
 }
