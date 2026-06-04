@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-06-04 17:24",
+  "updated_at": "2026-06-04 18:33",
   "orders": [
     {
       "id": 163,
@@ -9,9 +9,9 @@
       "stk_id": "07313160",
       "product_name": "MHWK4TA/A AIRPODS MAX 2 MIDNIGHT-TWN",
       "qty": 1,
-      "status": "pending",
-      "wait_days": null,
-      "confirmed_at": null,
+      "status": "confirmed",
+      "wait_days": 1,
+      "confirmed_at": "2026-06-03",
       "arrived_at": null,
       "reply": "貨到寄出～",
       "reply_date": "2026-06-03"
