@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-06-04 17:20",
+  "updated_at": "2026-06-04 17:24",
   "orders": [
     {
       "id": 163,
@@ -13,8 +13,8 @@
       "wait_days": null,
       "confirmed_at": null,
       "arrived_at": null,
-      "reply": null,
-      "reply_date": null
+      "reply": "貨到寄出～",
+      "reply_date": "2026-06-03"
     },
     {
       "id": 159,
