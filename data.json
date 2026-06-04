@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-06-04 22:48",
+  "updated_at": "2026-06-05 01:04",
   "orders": [
     {
       "id": 163,
@@ -10,7 +10,7 @@
       "product_name": "MHWK4TA/A AIRPODS MAX 2 MIDNIGHT-TWN",
       "qty": 1,
       "status": "confirmed",
-      "wait_days": 1,
+      "wait_days": 2,
       "confirmed_at": "2026-06-03",
       "arrived_at": null,
       "reply": "貨到寄出～",
@@ -25,7 +25,7 @@
       "product_name": "MHWM4TA/A AIRPODS MAX 2 BLUE-TWN",
       "qty": 1,
       "status": "shipped",
-      "wait_days": 1,
+      "wait_days": 2,
       "confirmed_at": "2026-06-03",
       "arrived_at": null,
       "reply": "總倉有貨，本週隨貨寄出～   Clare",
