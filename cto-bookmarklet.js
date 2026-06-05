@@ -60,6 +60,8 @@
         else if (/記憶體/.test(t)) { var m = t.match(/\d+\s*GB/); specs.push({ cat: 'memory', text: m ? m[0] : t }); }
         else if (/SSD|儲存/.test(t)) { var s = t.match(/\d+\s*(TB|GB)/); specs.push({ cat: 'storage', text: s ? s[0] : t }); }
         else if (/顯示器/.test(t) && !/外接|支援|埠/.test(t)) specs.push({ cat: 'display', text: t });
+        else if (/電源轉接器|電源供應器/.test(t)) specs.push({ cat: 'power', text: t });
+        else if (/鍵盤|Keyboard/.test(t)) specs.push({ cat: 'keyboard', text: t });
       });
     }
     var p = cl((item.querySelector('[data-autom="Monthly_price"]') || {}).textContent || '').match(/NT\$[\d,]+/);
@@ -121,13 +123,18 @@
   //  （注意：書籤碼內不可出現字面 '#'，會被當網址片段截斷；故用 fromCharCode(35) 組出。）
   var delivered = false;
   if (window.opener && !window.opener.closed) {
-    try { window.opener.postMessage({ __studioa_cto: data }, '*'); window.opener.focus(); delivered = true; } catch (e) {}
+    try { window.opener.postMessage({ __studioa_cto: data }, '*'); delivered = true; } catch (e) {}
   }
   if (!delivered) {
     var url = FORM_URL + String.fromCharCode(35) + 'cto=' + encodeURIComponent(JSON.stringify(data));
     var w = window.open(url, 'studioa_cto_form');
     if (w) delivered = true; else location.href = url;
   }
+
+  // 交付完畢後聚焦表單分頁（不關閉 Apple 分頁）
+  // window.open('', name) 在使用者手勢中可切換到同名已開啟的分頁，
+  // 比 opener.focus() 更可靠（後者常被瀏覽器跨來源封鎖）。
+  if (delivered) { try { window.open('', 'studioa_cto_form'); } catch (e) {} }
 
   // 多筆：交付成功後自動移除其他筆（只刪代碼≠保留筆者，永不誤刪保留筆）
   if (items.length > 1 && delivered) {
