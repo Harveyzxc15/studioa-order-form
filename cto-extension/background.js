@@ -16,7 +16,7 @@
 'use strict';
 
 // ── 設定（部署時調整）─────────────────────────────────────────────
-var FORM_URL = 'https://harveyzxc15.github.io/studioa-order-form/index-cto-test.html';
+var FORM_URL = 'https://harveyzxc15.github.io/studioa-order-form/index.html';
 // 用來辨識「哪個分頁是表單」。預設比對 GitHub Pages 與本機測試。
 var FORM_URL_MATCH = [
   /harveyzxc15\.github\.io\/studioa-order-form\//i,
