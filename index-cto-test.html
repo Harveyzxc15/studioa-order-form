@@ -1,0 +1,1040 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<title>原廠商品需求表單（CTO 測試頁）</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, sans-serif; background: #f5f5f7; color: #1d1d1f; min-height: 100vh; }
+
+.header { background: #1d1d1f; color: #fff; padding: 16px 24px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.header-left h1 { font-size: 18px; font-weight: 600; }
+.header-left p { font-size: 12px; color: #a1a1a6; margin-top: 3px; }
+.version-badge { background: #3a3a3c; color: #d1d1d6; font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 20px; white-space: nowrap; letter-spacing: .3px; flex-shrink: 0; cursor: pointer; transition: background .15s; }
+.version-badge:hover { background: #4a4a4c; }
+
+.container { max-width: 1140px; margin: 30px auto; padding: 0 20px 60px; }
+
+/* 更新紀錄彈窗 */
+.modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.5); z-index: 100; align-items: flex-start; justify-content: center; padding: 60px 20px; overflow-y: auto; }
+.modal-overlay.show { display: flex; }
+.modal-box { background: #fff; border-radius: 16px; padding: 24px 26px; max-width: 460px; width: 100%; box-shadow: 0 20px 60px rgba(0,0,0,.3); }
+.modal-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; }
+.modal-head h2 { font-size: 17px; font-weight: 700; color: #1d1d1f; }
+.modal-close { background: #f0f0f2; border: none; width: 30px; height: 30px; border-radius: 50%; font-size: 16px; cursor: pointer; color: #6e6e73; }
+.modal-close:hover { background: #e0e0e3; }
+.manager-warn { background: #fff3e0; color: #e65100; border: 1.5px solid #ffb74d; border-radius: 12px; padding: 14px 18px; margin-bottom: 16px; font-size: 14px; line-height: 1.6; }
+.changelog-entry { margin-bottom: 16px; }
+.changelog-entry:last-child { margin-bottom: 0; }
+.changelog-ver { font-size: 12px; font-weight: 700; color: #0071e3; margin-bottom: 8px; }
+.changelog-list { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+.changelog-list li { font-size: 12.5px; line-height: 1.5; color: #3a3a3c; display: flex; gap: 7px; }
+.changelog-list .tag-new { color: #1b5e20; font-weight: 700; flex-shrink: 0; }
+.changelog-list .tag-fix { color: #e65100; font-weight: 700; flex-shrink: 0; }
+.two-col { display: flex; gap: 20px; align-items: flex-start; }
+.col-left { flex: 1; min-width: 0; }
+.col-right { flex: 1; min-width: 0; }
+@media (max-width: 860px) { .two-col { flex-direction: column; } }
+
+.card { background: #fff; border-radius: 14px; padding: 24px; margin-bottom: 16px; box-shadow: 0 1px 4px rgba(0,0,0,.08); }
+.card-title { font-size: 15px; font-weight: 600; margin-bottom: 16px; color: #1d1d1f; border-bottom: 1px solid #f0f0f2; padding-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+
+.form-group { margin-bottom: 14px; }
+label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 5px; color: #3a3a3c; }
+.req { color: #ff3b30; margin-left: 2px; }
+input[type=text], input[type=number], select, textarea {
+  width: 100%; padding: 10px 12px; border: 1.5px solid #d1d1d6;
+  border-radius: 8px; font-size: 14px; background: #fff; transition: border-color .15s;
+}
+input:focus, select:focus, textarea:focus { outline: none; border-color: #0071e3; }
+input.error { border-color: #ff3b30; }
+.error-msg { font-size: 11px; color: #ff3b30; margin-top: 3px; display: none; }
+.error-msg.show { display: block; }
+textarea { min-height: 70px; resize: vertical; }
+.row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.hint { font-size: 12px; color: #6e6e73; margin-top: 4px; }
+.alert { background: #fff3e0; border: 1px solid #ffe0b2; border-radius: 8px; padding: 9px 12px; font-size: 12px; color: #e65100; margin-bottom: 12px; }
+
+/* 類型選擇 */
+.type-tabs { display: flex; gap: 8px; margin-bottom: 16px; }
+.type-tab { flex: 1; padding: 9px 4px; border-radius: 10px; border: 2px solid #d1d1d6; background: #fff;
+  cursor: pointer; text-align: center; font-size: 12px; font-weight: 600; color: #6e6e73; transition: all .15s; }
+.type-tab:hover { border-color: #0071e3; color: #0071e3; }
+.type-tab.active { border-color: #0071e3; background: #e3f0ff; color: #0071e3; }
+
+/* 商品區塊 */
+.item-block { background: #fff; border-radius: 14px; padding: 20px; margin-bottom: 12px; box-shadow: 0 1px 4px rgba(0,0,0,.08); border-left: 4px solid #d1d1d6; }
+.item-block.type-normal { border-left-color: #0071e3; }
+.item-block.type-ipad   { border-left-color: #5856d6; }
+.item-block.type-cto    { border-left-color: #ff2d55; }
+.item-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+.item-num { font-size: 13px; font-weight: 700; color: #6e6e73; }
+.btn-remove { background: none; border: none; color: #ff3b30; cursor: pointer; font-size: 13px; padding: 4px 8px; border-radius: 6px; }
+.btn-remove:hover { background: #ffebee; }
+.item-fields { display: none; }
+.item-fields.show { display: block; }
+
+/* 按鈕 */
+.btn { width: 100%; padding: 13px; border-radius: 10px; border: none; cursor: pointer; font-size: 15px; font-weight: 600; }
+.btn-primary { background: #0071e3; color: #fff; }
+.btn-primary:hover { background: #0077ed; }
+.btn-add { background: #f0f7ff; color: #0071e3; border: 2px dashed #0071e3; padding: 12px; margin-bottom: 16px; }
+.btn-add:hover { background: #e3f0ff; }
+.btn-ghost { background: #e8e8ed; color: #1d1d1f; }
+.btn-open { background: #34c759; color: #fff; }
+.btn-open:hover { background: #28b04a; }
+.btn-back { background: #e8e8ed; color: #1d1d1f; }
+
+/* 預覽 */
+.preview-wrap { display: none; }
+.preview-wrap.show { display: block; }
+.preview-header { display: grid; grid-template-columns: auto 1fr; gap: 4px 10px; font-size: 13px; margin-bottom: 12px; }
+.preview-header .lbl { font-weight: 600; color: #6e6e73; }
+.email-preview { background: #f9f9fb; border: 1.5px solid #d1d1d6; border-radius: 10px; padding: 16px; font-family: monospace; font-size: 13px; line-height: 1.7; white-space: pre-wrap; word-break: break-all; }
+
+/* ── 說明白皮書 ──────────────────────────────────────── */
+.guide-card { background: #fff; border-radius: 14px; margin-bottom: 16px; box-shadow: 0 1px 4px rgba(0,0,0,.08); overflow: hidden; }
+.guide-head { display: flex; justify-content: space-between; align-items: center; padding: 16px 20px; user-select: none; }
+.guide-head-left { display: flex; align-items: center; gap: 10px; }
+.guide-head-left h2 { font-size: 15px; font-weight: 600; color: #1d1d1f; }
+.guide-head-left span { font-size: 12px; color: #6e6e73; }
+.guide-toggle-btn { font-size: 12px; color: #0071e3; font-weight: 500; background: none; border: none; cursor: pointer; padding: 4px 8px; border-radius: 6px; white-space: nowrap; }
+.guide-toggle-btn:hover { background: #e3f0ff; }
+.guide-body { padding: 0 20px 20px; display: block; }
+
+.guide-section { margin-bottom: 20px; }
+.guide-section:last-child { margin-bottom: 0; }
+.guide-section h3 { font-size: 13px; font-weight: 700; color: #3a3a3c; margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid #f0f0f2; }
+
+/* 流程步驟 */
+.steps { display: flex; gap: 8px; flex-wrap: wrap; }
+.step { display: flex; align-items: flex-start; gap: 8px; background: #f5f5f7; border-radius: 10px; padding: 10px 12px; flex: 1; min-width: 120px; }
+.step-num { background: #0071e3; color: #fff; border-radius: 50%; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; flex-shrink: 0; margin-top: 1px; }
+.step-text { font-size: 12px; line-height: 1.5; color: #1d1d1f; }
+.step-text strong { display: block; font-size: 13px; margin-bottom: 2px; }
+
+/* 商品類型 */
+.type-grid { display: grid; grid-template-columns: 1fr; gap: 10px; }
+.type-box { border-radius: 10px; padding: 12px; font-size: 12px; line-height: 1.5; }
+.type-box.t-normal { background: #e3f0ff; border-left: 3px solid #0071e3; }
+.type-box.t-ipad   { background: #ede7f6; border-left: 3px solid #5856d6; }
+.type-box.t-cto    { background: #ffeef1; border-left: 3px solid #ff2d55; }
+.type-box strong { display: block; font-size: 13px; margin-bottom: 4px; }
+.type-box .tag { display: inline-block; background: rgba(0,0,0,.07); border-radius: 4px; padding: 1px 5px; font-size: 10px; margin-top: 4px; }
+
+/* 注意事項 */
+.notes { list-style: none; display: flex; flex-direction: column; gap: 7px; }
+.notes li { display: flex; gap: 8px; font-size: 13px; line-height: 1.5; }
+.notes li .icon { flex-shrink: 0; font-size: 14px; margin-top: 1px; }
+.notes li.warn .icon::before { content: '⚠️'; }
+.notes li.info .icon::before { content: 'ℹ️'; }
+.notes li.ok   .icon::before { content: '✅'; }
+.notes li.clip .icon::before { content: '📎'; }
+
+@media (max-width: 500px) {
+  .type-grid { grid-template-columns: 1fr; }
+  .steps { flex-direction: column; }
+}
+</style>
+</head>
+<body>
+
+<div style="background:#ff9500;color:#1d1d1f;text-align:center;font-size:13px;font-weight:700;padding:8px 12px;">
+  🧪 CTO 功能測試頁 — 尚未上線，正式請用 index.html
+</div>
+
+<div class="header">
+  <div class="header-left">
+    <h1>📦 原廠商品 / 客製機需求表單</h1>
+    <p>STUDIO A 北一區門市 ｜ 填寫完成後產生信件，確認內容再發送</p>
+  </div>
+  <div style="text-align:right">
+    <span class="version-badge" onclick="openChangelog()" title="點我看更新紀錄">v1.5</span>
+    <div style="margin-top:6px;display:flex;flex-direction:column;gap:6px;align-items:flex-end">
+      <a href="guide.html" style="font-size:14px;color:#d1d1d6;text-decoration:none">📖 使用指南</a>
+      <a href="track.html" style="font-size:14px;color:#d1d1d6;text-decoration:none">📊 追蹤查詢</a>
+      <a href="http://localhost:5556" target="_blank" style="font-size:14px;color:#d1d1d6;text-decoration:none">🔧 後台管理（限 Bob）</a>
+      <span style="font-size:11px;color:#6e6e73;margin-top:2px">頁面未更新？按 ⌘+Option+R</span>
+    </div>
+  </div>
+</div>
+
+<!-- ── 更新紀錄彈窗（點版本號開啟）── -->
+<div class="modal-overlay" id="changelogModal" onclick="if(event.target===this)closeChangelog()">
+  <div class="modal-box">
+    <div class="modal-head">
+      <h2>🔄 更新紀錄</h2>
+      <button class="modal-close" onclick="closeChangelog()">✕</button>
+    </div>
+    <div class="changelog-entry">
+      <div class="changelog-ver">2026/06/02 · v1.5</div>
+      <ul class="changelog-list">
+        <li><span class="tag-fix">調整</span><span>高容量/CEL 與 CTO 的訂金固定為「已全額付清」，不可更改</span></li>
+      </ul>
+    </div>
+    <div class="changelog-entry">
+      <div class="changelog-ver">2026/06/01 · v1.4</div>
+      <ul class="changelog-list">
+        <li><span class="tag-new">新增</span><span>表單頁可直接進入後台管理（限 Bob）</span></li>
+        <li><span class="tag-fix">調整</span><span>更新紀錄改為點版本號彈出</span></li>
+      </ul>
+    </div>
+    <div class="changelog-entry">
+      <div class="changelog-ver">2026/06/01 · v1.3</div>
+      <ul class="changelog-list">
+        <li><span class="tag-new">新增</span><span>版面改為左右並排：說明在左、表單在右，不再收折</span></li>
+        <li><span class="tag-new">新增</span><span>送出前加入店長核對提醒與確認</span></li>
+        <li><span class="tag-new">新增</span><span>追蹤查詢頁可一鍵返回表單</span></li>
+        <li><span class="tag-fix">修正</span><span>訂單類型更名：原廠需求 / 高容量、CEL / CTO</span></li>
+        <li><span class="tag-fix">修正</span><span>後台信件解析，正確抓取商品名稱與存貨代碼</span></li>
+        <li><span class="tag-fix">修正</span><span>出貨 / 到貨狀態自動偵測（後台追蹤）</span></li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+ <div class="two-col">
+
+  <div class="col-left">
+
+  <!-- ── 說明白皮書 ── -->
+  <div class="guide-card">
+    <div class="guide-head">
+      <div class="guide-head-left">
+        <h2>📋 使用說明與注意事項</h2>
+        <span>第一次使用請先閱讀</span>
+      </div>
+    </div>
+    <div class="guide-body" id="guideBody">
+
+      <!-- 目的 -->
+      <div class="guide-section">
+        <h3>目的</h3>
+        <p style="font-size:13px;line-height:1.7;color:#3a3a3c">
+          本表單供 <strong>士林、微風、美麗華、阿波羅、大葉高島屋、羅東</strong> 六間門市，
+          向採購（Ellen 黃千玲 / Clare 林佳儀）提出原廠商品或客製機需求。<br>
+          填寫完成後系統自動帶入收件人、副本、主旨與內文格式，<strong>由門市人員自行在 Mail 中確認並發送</strong>，
+          發出後 Bob 的信箱即可自動追蹤下訂與到貨狀態。
+        </p>
+      </div>
+
+      <!-- 操作流程 -->
+      <div class="guide-section">
+        <h3>操作流程</h3>
+        <div class="steps">
+          <div class="step">
+            <div class="step-num">1</div>
+            <div class="step-text"><strong>選擇門市</strong>副本與簽名將自動帶入該門市資訊</div>
+          </div>
+          <div class="step">
+            <div class="step-num">2</div>
+            <div class="step-text"><strong>新增商品</strong>點「＋ 新增商品」，選擇類型後填入欄位；同一封信可填多筆</div>
+          </div>
+          <div class="step">
+            <div class="step-num">3</div>
+            <div class="step-text"><strong>產生預覽</strong>點「📧 產生信件預覽」，確認所有資料無誤</div>
+          </div>
+          <div class="step">
+            <div class="step-num">4</div>
+            <div class="step-text"><strong>發送信件</strong>點「✉️ 開啟 Mail 發送」，在 Mail 中再次確認後按發送</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 商品類型 -->
+      <div class="guide-section">
+        <h3>商品類型說明</h3>
+        <div class="type-grid">
+          <div class="type-box t-normal">
+            <strong>🛒 原廠需求</strong>
+            一般庫存商品，需填寫存貨代碼、商品名稱、數量、單價及訂金狀態。
+            <span class="tag">有存貨代碼</span>
+          </div>
+          <div class="type-box t-ipad">
+            <strong>📱 高容量/CEL</strong>
+            iPad Pro 512G/1TB/2TB、iPad Air 512G/1TB、CEL 版 iPad，須附結帳單據。
+            <span class="tag">有存貨代碼</span><span class="tag">需附件</span>
+          </div>
+          <div class="type-box t-cto">
+            <strong>⚙️ CTO</strong>
+            Apple 官網客製化規格，需填原存貨代碼、規格、客製後網址，須附截圖及結帳單據。
+            <span class="tag">需附件</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── CTO 規格自動帶入書籤（測試功能）── -->
+      <div class="guide-section">
+        <h3>🆕 CTO 規格自動帶入（測試）</h3>
+        <div class="type-box t-cto" style="background:#fff8f9">
+          <strong>📥 一次性安裝：Apple 規格擷取書籤</strong>
+          把下面這個連結<strong>拖曳到瀏覽器書籤列</strong>（每人只需一次）：<br>
+          <a id="ctoBookmarklet" href="#"
+             style="display:inline-block;margin:8px 0;background:#ff2d55;color:#fff;font-weight:700;
+                    padding:7px 14px;border-radius:8px;text-decoration:none;cursor:grab"
+             title="拖我到書籤列，不要點">📌 STUDIO A｜Apple規格擷取</a>
+          <div style="font-size:11px;color:#6e6e73;margin-bottom:6px">（請用拖曳，直接點會跳提示）</div>
+          <div style="background:#fff3cd;border:1px solid #ffe08a;border-radius:8px;padding:8px 10px;font-size:11px;color:#7a5b00;margin-bottom:8px">
+            ⚠️ 拖曳是「<strong>新增</strong>」不是「取代」。更新版本時，請先把書籤列上<strong>舊的同名書籤刪掉</strong>再重拖，否則會點到舊版（症狀：沒反應）。<br>
+            或用備用安裝法：
+            <button type="button" onclick="copyBookmarklet(this)"
+                    style="margin-top:6px;background:#0071e3;color:#fff;border:none;border-radius:6px;padding:5px 10px;font-size:11px;cursor:pointer">📋 複製書籤程式碼</button>
+            <span style="color:#7a5b00"> → 書籤列右鍵「加入網頁」→ 名稱填 STUDIO A → 網址貼上。</span>
+          </div>
+          <strong>使用方式（全程自己操作，書籤只在最後按一次）：</strong><br>
+          ① 在本表單選 CTO、填「原存貨代碼／原產品名稱」，按 <strong>🍎 前往 Apple 配置</strong><br>
+          ② 在 Apple 自己點選好客製規格<br>
+          ③ 自己按 <strong>加入購物袋</strong><br>
+          ④ 到「購物袋」頁，<strong>按一次書籤</strong> → 自動開回表單，帶入機型/規格(只列與原機不同處)/客製後價格/購物袋網址<br>
+          ⑤ 填客戶姓名/電話/發票 → 按 <strong>📄 下載訂購單 PDF</strong>（規格明細卡自動產生並嵌入）；<strong>🖼 下載規格截圖</strong> 可當信件附件
+          <div style="font-size:11px;color:#e65100;margin-top:6px">
+            ⚠️ <strong>原價(起)購物袋頁沒有，需手動補</strong>。規格截圖無法自動塞進 mailto 信件，請用「下載規格截圖」再手動附上。<br>
+            購物袋若有多筆，會帶回<strong>最新加入</strong>那筆，並在你按「確定」後自動移除其他筆。Apple 改版時擷取可能失效。
+          </div>
+        </div>
+      </div>
+
+      <!-- 注意事項 -->
+      <div class="guide-section">
+        <h3>注意事項</h3>
+        <ul class="notes">
+          <li class="warn"><span class="icon"></span><span>寄出前<strong>必須由店長確認所有資料正確</strong>，信件一旦發出即視為正式訂購需求。</span></li>
+          <li class="warn"><span class="icon"></span><span><strong>存貨代碼必須為 8 碼數字</strong>（例：07312305），格式錯誤會立即提示，無法產生信件。</span></li>
+          <li class="info"><span class="icon"></span><span>標有 <span style="color:#ff3b30">*</span> 的欄位為必填，不可留空。</span></li>
+          <li class="info"><span class="icon"></span><span>信件<strong>主旨與收件人</strong>已自動帶入，請勿在 Mail 中修改，以確保後台可正確追蹤。</span></li>
+          <li class="clip"><span class="icon"></span><span><strong>CTO 客製機</strong>：發送信件時需同時附上 ①客製機截圖 ②客戶已結帳單據（含發票及訂購單）。</span></li>
+          <li class="clip"><span class="icon"></span><span><strong>iPad 高容量</strong>：發送信件時需附上客戶已結帳單據（含發票及訂購單）。</span></li>
+          <li class="ok"><span class="icon"></span><span>同一封信可填多筆商品，請重複點「＋ 新增商品」，不需分開寄送。</span></li>
+          <li class="ok"><span class="icon"></span><span>點「✉️ 開啟 Mail 發送」後，Apple Mail 會自動帶入所有資訊，<strong>在 Mail 中確認無誤後再按發送</strong>。</span></li>
+        </ul>
+      </div>
+
+    </div><!-- /guide-body -->
+  </div><!-- /guide-card -->
+
+  </div><!-- /col-left -->
+  <div class="col-right">
+
+  <!-- 表單 -->
+  <div id="formSection">
+    <!-- 基本資訊 -->
+    <div class="card">
+      <div class="card-title">基本資訊</div>
+      <div class="form-group">
+        <label>門市 <span class="req">*</span></label>
+        <select id="store">
+          <option value="">請選擇門市</option>
+          <option>士林</option><option>微風</option><option>美麗華</option>
+          <option>阿波羅</option><option>大葉高島屋</option><option>羅東</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- 商品列表 -->
+    <div id="itemList"></div>
+
+    <!-- 新增商品按鈕 -->
+    <button class="btn btn-add" onclick="addItem()">＋ 新增商品</button>
+
+    <div class="card">
+      <button class="btn btn-primary" onclick="generateEmail()">📧 產生信件預覽</button>
+    </div>
+  </div>
+
+  <!-- 預覽 -->
+  <div id="previewSection" class="preview-wrap">
+    <div class="manager-warn">⚠️ 請由<strong>店長核對所有內容無誤後</strong>，再發送信件。信件一旦寄出即視為正式訂購需求。</div>
+    <div class="card">
+      <div class="card-title">✉️ 信件預覽 — 確認後發送</div>
+      <div class="preview-header">
+        <span class="lbl">收件人</span><span class="val">Ellen 黃千玲、Clare 林佳儀</span>
+        <span class="lbl">副本</span><span class="val" id="prev-cc"></span>
+        <span class="lbl">主旨</span><span class="val" id="prev-subject"></span>
+      </div>
+      <div class="email-preview" id="prev-body"></div>
+    </div>
+    <div class="card">
+      <button class="btn btn-open" onclick="openMail()">✉️ 開啟 Mail 發送</button>
+      <button class="btn btn-back" style="margin-top:10px" onclick="goBack()">← 返回修改</button>
+    </div>
+  </div>
+
+  </div><!-- /col-right -->
+ </div><!-- /two-col -->
+</div>
+
+<!-- 商品 template -->
+<template id="tpl-normal">
+  <div class="form-group">
+    <label>存貨代碼 <span class="req">*</span></label>
+    <input type="text" name="stk" placeholder="例：07312305" oninput="validateStk(this)">
+    <div class="error-msg">存貨代碼須為 8 碼數字</div>
+  </div>
+  <div class="form-group">
+    <label>商品名稱 <span class="req">*</span></label>
+    <input type="text" name="pname" placeholder="例：ME2J4TA/A Powerbeats Fit Jet Black">
+  </div>
+  <div class="row2">
+    <div class="form-group">
+      <label>數量 <span class="req">*</span></label>
+      <input type="number" name="qty" value="1" min="1">
+    </div>
+    <div class="form-group">
+      <label>單價 <span class="req">*</span></label>
+      <input type="text" name="price" placeholder="例：6990">
+    </div>
+  </div>
+  <div class="form-group">
+    <label>是否已收訂金 <span class="req">*</span></label>
+    <select name="deposit">
+      <option>已全額付清</option>
+      <option>已收部分訂金</option>
+      <option>未結清</option>
+    </select>
+  </div>
+  <div class="form-group">
+    <label>備註</label>
+    <textarea name="note" placeholder="其他說明"></textarea>
+  </div>
+</template>
+
+<template id="tpl-ipad">
+  <div class="alert">⚠️ 適用：iPad Pro 512G/1TB/2TB、iPad Air 512G/1TB、CEL 版 iPad</div>
+  <div class="form-group">
+    <label>存貨代碼 <span class="req">*</span></label>
+    <input type="text" name="stk" placeholder="例：07312001" oninput="validateStk(this)">
+    <div class="error-msg">存貨代碼須為 8 碼數字</div>
+  </div>
+  <div class="form-group">
+    <label>商品名稱 <span class="req">*</span></label>
+    <input type="text" name="pname" placeholder="例：iPad Pro 13吋 M4 1TB Wi-Fi 黑色">
+  </div>
+  <div class="row2">
+    <div class="form-group">
+      <label>數量 <span class="req">*</span></label>
+      <input type="number" name="qty" value="1" min="1">
+    </div>
+    <div class="form-group">
+      <label>是否已收訂金 <span class="req">*</span></label>
+      <input type="text" name="deposit" value="已全額付清" readonly
+             style="background:#f0f0f2;color:#6e6e73;cursor:not-allowed" title="高容量/CEL 一律全額付清">
+    </div>
+  </div>
+  <div class="form-group">
+    <label>備註</label>
+    <textarea name="note" placeholder="其他說明"></textarea>
+  </div>
+</template>
+
+<template id="tpl-cto">
+  <div class="form-group">
+    <label>原存貨代碼 <span class="req">*</span></label>
+    <input type="text" name="stk" placeholder="例：07312164" oninput="validateStk(this)">
+    <div class="error-msg">存貨代碼須為 8 碼數字</div>
+  </div>
+  <div class="form-group">
+    <label>原產品名稱 <span class="req">*</span></label>
+    <input type="text" name="pname" placeholder="例：MGE44TA/A MBP 16/M5 Pro/SL/18C/20C GPU/24GB/1T-TWN">
+  </div>
+  <div class="form-group">
+    <button type="button" class="btn" onclick="goToApple(this)"
+            style="background:#ff2d55;color:#fff;padding:11px">🍎 前往 Apple 配置（會記住此基本機型）</button>
+    <p class="hint">填好上面兩欄後按此 → 自動開啟對應機型的 Apple 台灣頁。配置完用書籤帶回，規格只會列出與此基本機型不同的項目。</p>
+  </div>
+  <div class="row2">
+    <div class="form-group">
+      <label>原價 <span class="req">*</span></label>
+      <input type="text" name="price" placeholder="例：119900">
+    </div>
+    <div class="form-group">
+      <label>客製後價格 <span class="req">*</span></label>
+      <input type="text" name="newprice" placeholder="例：135900">
+    </div>
+  </div>
+  <div class="form-group">
+    <label>客製規格 <span class="req">*</span></label>
+    <textarea name="specs" placeholder="例：&#10;記憶體：128GB&#10;硬碟：2TB"></textarea>
+  </div>
+  <div class="form-group">
+    <label>客製點選完畢後網址 <span class="req">*</span></label>
+    <input type="text" name="url" placeholder="https://www.apple.com/...">
+    <p class="hint">在 Apple 官網設定好規格後，複製網址貼上</p>
+  </div>
+  <div class="form-group">
+    <label>是否已收訂金 <span class="req">*</span></label>
+    <input type="text" name="deposit" value="已全額付清" readonly
+           style="background:#f0f0f2;color:#6e6e73;cursor:not-allowed" title="CTO 客製機一律全額付清">
+  </div>
+  <div class="form-group">
+    <label>備註</label>
+    <textarea name="note" placeholder="其他說明"></textarea>
+  </div>
+
+  <!-- ── 訂購單（PDF）資訊 ── -->
+  <div class="form-group" style="border-top:1px dashed #ff8fa3;padding-top:14px;margin-top:6px">
+    <label style="color:#ff2d55">🧾 訂購單 PDF 資訊（給客戶簽名用）</label>
+    <div class="row2">
+      <input type="text" name="custname" placeholder="客戶姓名">
+      <input type="text" name="custphone" placeholder="客戶電話">
+    </div>
+    <input type="text" name="invoice" placeholder="發票號碼" style="margin-top:10px">
+    <div class="cto-shot-wrap" style="margin-top:10px;display:none">
+      <div style="font-size:12px;color:#6e6e73;margin-bottom:4px">規格截圖（書籤自動帶入）：</div>
+      <img class="cto-shot-img" style="max-width:100%;border:1px solid #d1d1d6;border-radius:8px">
+    </div>
+    <label style="font-weight:400;font-size:12px;color:#6e6e73;margin-top:8px">
+      截圖沒自動帶入？手動上傳：<input type="file" accept="image/*" onchange="manualShot(this)" style="font-size:12px">
+    </label>
+    <div style="display:flex;gap:8px;margin-top:12px">
+      <button type="button" class="btn" style="background:#5856d6;color:#fff;padding:11px" onclick="downloadShot(this)">🖼 下載規格截圖</button>
+      <button type="button" class="btn" style="background:#ff2d55;color:#fff;padding:11px" onclick="downloadOrderPdf(this)">📄 下載訂購單 PDF</button>
+    </div>
+  </div>
+</template>
+
+<!-- CTO 書籤原始碼（單行、未執行；由 setupBookmarklet 讀取掛到連結 href）。
+     與 cto-bookmarklet.js 內容一致。改 FORM_URL 即可換回正式頁。 -->
+<script type="text/plain" id="ctoBmSrc">javascript:(function(){var F='__FORM_URL__';function cl(s){return(s||'').replace(/\s+/g,' ').trim();}function bag(){return /\/shop\/bag/.test(location.pathname);}if(!bag()){alert('請先自己在 Apple 完成：①點選客製規格 ②截圖訂製總覽 ③加入購物袋，\n然後到「購物袋」頁面，再按一次本書籤即可帶回表單。');return;}function ms(h){if(/MacBook\s*Pro/i.test(h))return 'macbook-pro';if(/MacBook\s*Air/i.test(h))return 'macbook-air';if(/Mac\s*Studio/i.test(h))return 'mac-studio';if(/Mac\s*mini/i.test(h))return 'mac-mini';if(/Mac\s*Pro/i.test(h))return 'mac-pro';if(/iMac/i.test(h))return 'imac';return '';}function ic(it){var c='';[].slice.call(it.querySelectorAll('[data-evar1]')).some(function(e){var parts=(e.getAttribute('data-evar1')||'').split('||');var v=(parts[1]||'').trim();if(/^[A-Z0-9][A-Z0-9\/.\-]{2,}$/i.test(v)){c=v;return true;}return false;});return c;}function sb(item){var head=cl((item.querySelector('[data-autom="bag-item-name"]')||{}).textContent||'');var sp=[];var mc=head.match(/^(\S+?)\s*\d+\s*吋/);if(mc)sp.push({cat:'color',text:mc[1]});var msz=head.match(/(\d+)\s*吋/);if(msz)sp.push({cat:'size',text:msz[1]+' 吋'});var mh=head.match(/配備\s*(.+?)\s*晶片/);if(mh)sp.push({cat:'chip',text:cl(mh[1])});var hw=item.querySelector('ul.list, ul[class*="list"]');if(hw){[].slice.call(hw.querySelectorAll('li')).forEach(function(li){var t=cl(li.textContent);if(/核心\s*CPU/.test(t))sp.push({cat:'cores',text:t.split('、').filter(function(x){return /CPU|GPU/.test(x);}).join('、')});else if(/記憶體/.test(t)){var m=t.match(/\d+\s*GB/);sp.push({cat:'memory',text:m?m[0]:t});}else if(/SSD|儲存/.test(t)){var s2=t.match(/\d+\s*(TB|GB)/);sp.push({cat:'storage',text:s2?s2[0]:t});}else if(/顯示器/.test(t)&&!/外接|支援|埠/.test(t))sp.push({cat:'display',text:t});});}var p=cl((item.querySelector('[data-autom="Monthly_price"]')||{}).textContent||'').match(/NT\$[\d,]+/);var code=ic(item);var slug=ms(head);var purl=(code&&slug)?'https://www.apple.com/tw/shop/buy-mac/'+slug+'?product='+code+'&step=attach':'';var lists=item.querySelectorAll('ul.list, ul[class*="list"]');function lt(ul){return ul?[].slice.call(ul.querySelectorAll('li')).map(function(li){return cl(li.textContent);}).filter(Boolean):[];}var im=item.querySelector('img');var detail={hardware:lt(lists[0]),software:lt(lists[1]),img:im?(im.currentSrc||im.src||''):'',price:p?p[0]:''};return {pname:head,fullSpecs:sp,newprice:p?p[0].replace(/[^\d]/g,''):'',productUrl:purl,detail:detail};}function gi(){return [].slice.call(document.querySelectorAll('[data-autom^="bag-item-"]')).filter(function(e){return /^bag-item-\d+$/.test(e.getAttribute('data-autom'));});}var W=function(t){return new Promise(function(r){setTimeout(r,t);});};var items=gi();if(!items.length){alert('購物袋是空的，或讀不到商品。請確認已加入購物袋。');return;}var keep=items[0];var data=sb(keep);data.bagUrl=data.productUrl||location.href;if(items.length>1)data.extraCount=items.length-1;var kc=ic(keep);var delivered=false;if(window.opener&&!window.opener.closed){try{window.opener.postMessage({__studioa_cto:data},'*');window.opener.focus();delivered=true;}catch(e){}}if(!delivered){var url=F+String.fromCharCode(35)+'cto='+encodeURIComponent(JSON.stringify(data));var w=window.open(url,'studioa_cto_form');if(w)delivered=true;else location.href=url;}if(items.length>1&&delivered){(async function(){for(var g=0;g<12;g++){var cur=gi();if(cur.length<=1)break;var victim=null;for(var i=0;i<cur.length;i++){if(ic(cur[i])!==kc){victim=cur[i];break;}}if(!victim)break;var rm=victim.querySelector('[data-autom="bag-item-remove-button"]');if(!rm)break;rm.click();await W(900);}})();}})();</script>
+
+<!-- PDF / 截圖用函式庫 -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<!-- ── 隱藏：CTO 訂購單 PDF 範本（依晶實科技範本重做）── -->
+<div id="pdfTemplate" style="position:fixed;left:-9999px;top:0;width:760px;background:#fff;color:#000;
+     font-family:-apple-system,'PingFang TC','Microsoft JhengHei',sans-serif;padding:26px 30px;box-sizing:border-box">
+  <div style="text-align:right;font-weight:800;font-size:17px;letter-spacing:1px;margin-bottom:8px">STUDIO A</div>
+  <div style="border:1.5px solid #000">
+    <div style="text-align:center;font-weight:800;font-size:17px;padding:7px;border-bottom:1.5px solid #000">晶實科技股份有限公司</div>
+    <div style="text-align:center;font-size:13px;padding:6px;border-bottom:1.5px solid #000">CTO 電腦客製機 / iPad Pro / iPad Air 高容量機型 - 下單</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;font-size:13px">
+      <div style="padding:8px 10px;border-bottom:1px solid #000;border-right:1px solid #000">門市：<span id="pf-store"></span></div>
+      <div style="padding:8px 10px;border-bottom:1px solid #000">客戶姓名：<span id="pf-name"></span></div>
+      <div style="padding:8px 10px;border-bottom:1px solid #000;border-right:1px solid #000">日期：<span id="pf-date"></span></div>
+      <div style="padding:8px 10px;border-bottom:1px solid #000">客戶電話：<span id="pf-phone"></span></div>
+      <div style="padding:8px 10px;border-bottom:1px solid #000;grid-column:1/3">原始升級標規型號：<span id="pf-model"></span></div>
+      <div style="padding:8px 10px;border-bottom:1px solid #000;border-right:1px solid #000">總金額：<span id="pf-total"></span></div>
+      <div style="padding:8px 10px;border-bottom:1px solid #000">發票號碼：<span id="pf-invoice"></span></div>
+    </div>
+    <div style="padding:10px;text-align:center;border-bottom:1.5px solid #000;min-height:60px">
+      <img id="pf-shot" style="max-width:100%;display:none">
+      <span id="pf-shot-empty" style="font-size:12px;color:#888">（規格截圖）</span>
+    </div>
+    <div style="text-align:center;font-weight:800;font-size:15px;background:#eee;padding:7px;border-bottom:1.5px solid #000">客戶確認訂單</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;font-size:13px">
+      <div style="padding:10px;min-height:80px;border-right:1px solid #000">門市人員</div>
+      <div style="padding:10px;min-height:80px">客戶簽收</div>
+    </div>
+  </div>
+  <div style="font-size:11px;margin-top:10px;line-height:1.8">
+    此訂單成立後<br>
+    ＊蘋果供貨正常狀態下(約三至四週排除國定假日)，無法更換機型或訂製項目及退貨退費。<br>
+    ＊如蘋果原廠供貨不穩定狀況下，超過兩個月無通知到貨，可全額退費。<br>
+    ＊若有新品瑕疵或硬體異常，無法更換全新品，需送至蘋果授權維修中心更換料件。<br>
+    ＊訂製期間無法確定交貨日期，以蘋果原廠出貨時間為主。<br>
+    ＊如遇蘋果改款通知無法出貨，將會全額退費。
+  </div>
+  <div style="text-align:right;font-size:11px;margin-top:4px">2026/2/4 修訂版</div>
+</div>
+
+<!-- ── 隱藏：Apple 風格「規格明細卡」（由表單依購物袋資料重繪，轉成截圖）── -->
+<div id="specCard" style="position:fixed;left:-9999px;top:0;width:680px;background:#fff;color:#1d1d1f;
+     font-family:-apple-system,'PingFang TC','Microsoft JhengHei',sans-serif;padding:24px 26px;box-sizing:border-box">
+  <div style="display:flex;gap:22px;align-items:flex-start">
+    <img id="sc-img" crossorigin="anonymous" style="width:118px;height:auto;flex-shrink:0;display:none">
+    <div style="flex:1;min-width:0">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:14px;border-bottom:1px solid #d2d2d7;padding-bottom:14px">
+        <div id="sc-name" style="font-size:18px;font-weight:600;line-height:1.35"></div>
+        <div id="sc-price" style="font-size:18px;font-weight:600;white-space:nowrap"></div>
+      </div>
+      <div style="font-size:12.5px;font-weight:700;color:#86868b;margin:16px 0 8px">硬體</div>
+      <ul id="sc-hw" style="list-style:none;display:flex;flex-direction:column;gap:7px;font-size:13.5px;line-height:1.45"></ul>
+      <div id="sc-sw-head" style="font-size:12.5px;font-weight:700;color:#86868b;margin:16px 0 8px">軟體</div>
+      <ul id="sc-sw" style="list-style:none;display:flex;flex-direction:column;gap:7px;font-size:13.5px;line-height:1.45"></ul>
+    </div>
+  </div>
+</div>
+
+<script>
+const TO = 'ellen@studioa.com.tw,Clare.Lin@studioa.com.tw';
+const BOB_CC = 'bob.yu@studioa.com.tw';
+const STORE_CC = {
+  '士林':      'shihlin@studioa.com.tw,Sam.Wang@studioa.com.tw',
+  '微風':      'breeze@studioa.com.tw,Nick.2391@studioa.com.tw',
+  '美麗華':    'miramar@studioa.com.tw,lee.lee@studioa.com.tw',
+  '阿波羅':    'apollo@studioa.com.tw,Ernest.Wang@studioa.com.tw',
+  '大葉高島屋':'dayeh@studioa.com.tw,Natalia.2057@studioa.com.tw',
+  '羅東':      'luodong@studioa.com.tw,Erin.2941@studioa.com.tw',
+};
+const CC_DISPLAY = {
+  '士林':      '士林門市、Sam 王彥翔、Bob 尤君暘',
+  '微風':      '微風門市、Nick 劉宇軒、Bob 尤君暘',
+  '美麗華':    '美麗華門市、Lee 李宜軒、Bob 尤君暘',
+  '阿波羅':    '阿波羅門市、Ernest 王筠文、Bob 尤君暘',
+  '大葉高島屋':'大葉高島屋門市、Natalia 林玟秀、Bob 尤君暘',
+  '羅東':      '羅東門市、Erin 游佩玲、Bob 尤君暘',
+};
+const CHINESE_NUMS = ['一','二','三','四','五','六','七','八','九','十'];
+
+let itemCount = 0;
+
+function getDateStr() {
+  const d = new Date();
+  return `${d.getFullYear()}${String(d.getMonth()+1).padStart(2,'0')}${String(d.getDate()).padStart(2,'0')}`;
+}
+
+function addItem() {
+  itemCount++;
+  const block = document.createElement('div');
+  block.className = 'item-block';
+  block.dataset.id = itemCount;
+  block.innerHTML = `
+    <div class="item-header">
+      <span class="item-num">商品 ${itemCount}</span>
+      <button class="btn-remove" onclick="removeItem(${itemCount})" type="button">✕ 移除</button>
+    </div>
+    <div class="type-tabs">
+      <div class="type-tab" onclick="setItemType(${itemCount},'normal',this)">🛒 原廠需求</div>
+      <div class="type-tab" onclick="setItemType(${itemCount},'ipad',this)">📱 高容量/CEL</div>
+      <div class="type-tab" onclick="setItemType(${itemCount},'cto',this)">⚙️ CTO</div>
+    </div>
+    <div class="item-fields" id="fields-${itemCount}"></div>
+  `;
+  document.getElementById('itemList').appendChild(block);
+  updateItemNums();
+}
+
+function removeItem(id) {
+  const el = document.querySelector(`[data-id="${id}"]`);
+  if (el) el.remove();
+  updateItemNums();
+}
+
+function updateItemNums() {
+  document.querySelectorAll('.item-block').forEach((b, i) => {
+    b.querySelector('.item-num').textContent = `商品 ${i+1}`;
+  });
+}
+
+function setItemType(id, type, tabEl) {
+  const block = document.querySelector(`[data-id="${id}"]`);
+  block.className = `item-block type-${type}`;
+  block.dataset.type = type;
+  block.querySelectorAll('.type-tab').forEach(t => t.classList.remove('active'));
+  tabEl.classList.add('active');
+
+  const fieldsEl = document.getElementById(`fields-${id}`);
+  const tpl = document.getElementById(`tpl-${type}`);
+  fieldsEl.innerHTML = '';
+  fieldsEl.appendChild(tpl.content.cloneNode(true));
+  fieldsEl.classList.add('show');
+}
+
+// SKU 驗證：8碼數字
+function validateStk(input) {
+  const val = input.value.trim();
+  const errEl = input.nextElementSibling;
+  const isValid = /^\d{8}$/.test(val) || val === '';
+  input.classList.toggle('error', !isValid && val !== '');
+  if (errEl && errEl.classList.contains('error-msg')) {
+    errEl.classList.toggle('show', !isValid && val !== '');
+  }
+}
+
+function getField(fieldsEl, name) {
+  const el = fieldsEl.querySelector(`[name="${name}"]`);
+  return el ? el.value.trim() : '';
+}
+
+function generateEmail() {
+  const store = document.getElementById('store').value;
+  if (!store) { alert('請選擇門市'); return; }
+
+  const blocks = document.querySelectorAll('.item-block');
+  if (blocks.length === 0) { alert('請至少新增一筆商品'); return; }
+
+  const sections = [];
+  let hasError = false;
+
+  blocks.forEach((block, idx) => {
+    const type = block.dataset.type;
+    if (!type) { alert(`商品 ${idx+1} 請選擇需求類型`); hasError = true; return; }
+    const f = block.querySelector('.item-fields');
+    const num = CHINESE_NUMS[idx] || String(idx+1);
+
+    if (type === 'normal') {
+      const stk = getField(f,'stk'), pname = getField(f,'pname'),
+            qty = getField(f,'qty'), price = getField(f,'price'),
+            dep = getField(f,'deposit'), note = getField(f,'note');
+      if (!stk || !pname || !price) { alert(`商品 ${idx+1}：請填寫所有必填欄位`); hasError = true; return; }
+      if (!/^\d{8}$/.test(stk)) { alert(`商品 ${idx+1}：存貨代碼須為 8 碼數字`); hasError = true; return; }
+      let s = `${num}、原廠需求\n存貨代碼：${stk}\n商品名稱：${pname}\n數量：${qty}\n單價：${price}\n是否已收訂金：${dep}`;
+      if (note) s += `\n備註：${note}`;
+      sections.push(s);
+    }
+    else if (type === 'ipad') {
+      const stk = getField(f,'stk'), pname = getField(f,'pname'),
+            qty = getField(f,'qty'), dep = getField(f,'deposit'), note = getField(f,'note');
+      if (!stk || !pname) { alert(`商品 ${idx+1}：請填寫所有必填欄位`); hasError = true; return; }
+      if (!/^\d{8}$/.test(stk)) { alert(`商品 ${idx+1}：存貨代碼須為 8 碼數字`); hasError = true; return; }
+      let s = `${num}、高容量/CEL\n存貨代碼：${stk}\n商品名稱：${pname}\n數量：${qty}\n是否已收訂金：${dep}`;
+      if (note) s += `\n備註：${note}`;
+      s += `\n\n附件：\n1. 客戶已結帳單據（含發票及訂購單）`;
+      sections.push(s);
+    }
+    else if (type === 'cto') {
+      const stk = getField(f,'stk'), pname = getField(f,'pname'),
+            price = getField(f,'price'), newprice = getField(f,'newprice'),
+            specs = getField(f,'specs'), url = getField(f,'url'), note = getField(f,'note');
+      if (!stk || !pname || !price || !newprice || !specs || !url) {
+        alert(`商品 ${idx+1}：請填寫所有必填欄位`); hasError = true; return;
+      }
+      if (!/^\d{8}$/.test(stk)) { alert(`商品 ${idx+1}：存貨代碼須為 8 碼數字`); hasError = true; return; }
+      let s = `${num}、CTO 客製機\n原存貨代碼：${stk}\n原產品名稱：${pname}\n原價：${price}\n客製規格：${specs}\n客製後價格：${newprice}\n客製點選完畢後網址：${url}\n是否已收訂金：已全額付清`;
+      if (note) s += `\n備註：${note}`;
+      s += `\n\n附件：\n1. 客製機截圖\n2. 客戶已結帳單據（含發票及訂購單）`;
+      sections.push(s);
+    }
+  });
+
+  if (hasError) return;
+
+  const subject = `${getDateStr()}${store}門市原廠商品/客製機需求`;
+  const body = `Dear Ellen Clare,\n\n${store}門市有以下需求，麻煩協助下訂，謝謝\n\n`
+             + sections.join('\n\n') ;
+
+  const storeCc = STORE_CC[store] || '';
+  const fullCc = [storeCc, BOB_CC].filter(Boolean).join(',');
+
+  document.getElementById('prev-cc').textContent = CC_DISPLAY[store] || 'Bob 尤君暘';
+  document.getElementById('prev-subject').textContent = subject;
+  document.getElementById('prev-body').textContent = body;
+  window._mailData = { subject, body, cc: fullCc };
+
+  document.getElementById('formSection').style.display = 'none';
+  document.getElementById('previewSection').classList.add('show');
+}
+
+function openMail() {
+  if (!confirm('⚠️ 請確認已由店長核對所有內容無誤。\n\n信件一旦寄出即視為正式訂購需求，確定要開啟 Mail 發送嗎？')) return;
+  const { subject, body, cc } = window._mailData;
+  const mailto = `mailto:${TO}?cc=${encodeURIComponent(cc)}&subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  window.location.href = mailto;
+}
+
+function goBack() {
+  document.getElementById('formSection').style.display = 'block';
+  document.getElementById('previewSection').classList.remove('show');
+}
+
+function openChangelog()  { document.getElementById('changelogModal').classList.add('show'); }
+function closeChangelog() { document.getElementById('changelogModal').classList.remove('show'); }
+
+// ════════════════════════════════════════════════════════════════
+//  CTO 工具：原產品名稱解析、機型→Apple網址、規格差異
+// ════════════════════════════════════════════════════════════════
+const CTO_BASE_KEY = 'studioa_cto_base';
+const COLOR_MAP = { SL:'銀色', SV:'銀色', SG:'太空灰', GY:'太空灰', SB:'太空黑',
+  MN:'午夜', MD:'午夜', ST:'星光', SK:'天藍', BL:'藍色', BU:'藍色', PK:'粉紅',
+  GD:'金色', GO:'金色', GN:'綠色', OR:'橙色', YL:'黃色', PL:'紫色', RD:'紅色', WH:'白色', BK:'黑色' };
+const CAT_LABEL = { size:'尺寸', color:'顏色', display:'顯示器', cores:'CPU / GPU',
+  chip:'晶片', memory:'記憶體', storage:'儲存空間', software:'附加軟體', other:'' };
+
+function memNorm(s){ const m=(s||'').match(/(\d+)\s*GB/i); return m? m[1]+'GB':''; }
+function stoNorm(s){ const m=(s||'').match(/(\d+)\s*(TB|T|GB|G)\b/i); if(!m) return '';
+  const u=m[2].toUpperCase(); return (u==='T'||u==='TB')? m[1]+'TB' : m[1]+'GB'; }
+function digits(s){ const m=(s||'').match(/\d+/); return m? m[0]:''; }
+
+// 解析「MGE44TA/A MBP 16/M5 Pro/SL/18C/20C GPU/24GB/1T-TWN」
+function parseBaseName(name){
+  let s=(name||'').trim();
+  s=s.replace(/^[A-Z0-9]{4,8}\/[A-Z0-9]+\s+/i,'');     // 去料號
+  s=s.replace(/-(TWN?|ZP|LL|B)\s*$/i,'');               // 去地區尾碼
+  const toks=s.split('/').map(t=>t.trim()).filter(Boolean);
+  const base={ raw:name, model:toks[0]||'', chip:'', colorCode:'', color:'',
+               cpu:'', gpu:'', memory:'', storage:'', size:'' };
+  const sizeM=(base.model||'').match(/\b(13|14|15|16|24|27)\b/); if(sizeM) base.size=sizeM[1];
+  toks.slice(1).forEach(t=>{
+    const u=t.toUpperCase();
+    if(/GPU/i.test(t)) base.gpu=digits(t);
+    else if(/CPU/i.test(t) || /^\d+C$/i.test(t)) base.cpu=digits(t);
+    else if(/^\d+\s*GB$/i.test(t)) base.memory=memNorm(t);
+    else if(/^\d+\s*(TB|T|G)$/i.test(t)) base.storage=stoNorm(t);
+    else if(/^M\d/i.test(t)) base.chip=t;
+    else if(COLOR_MAP[u]) { base.colorCode=u; base.color=COLOR_MAP[u]; }
+    else if(/^[A-Z]{2,3}$/.test(u) && !base.colorCode){ base.colorCode=u; } // 未知色碼
+  });
+  return base;
+}
+
+function modelToAppleUrl(model){
+  const m=(model||'').toUpperCase(), B='https://www.apple.com/tw/shop/';
+  if(/MBP|MACBOOK\s*PRO/.test(m)) return B+'buy-mac/macbook-pro'+(/16/.test(m)?'/16-吋':/14/.test(m)?'/14-吋':'');
+  if(/MBA|MACBOOK\s*AIR|\bAIR\b/.test(m)) return B+'buy-mac/macbook-air'+(/15/.test(m)?'/15-吋':/13/.test(m)?'/13-吋':'');
+  if(/MAC\s*STUDIO/.test(m)) return B+'buy-mac/mac-studio';
+  if(/MAC\s*MINI|\bMINI\b/.test(m)) return B+'buy-mac/mac-mini';
+  if(/MAC\s*PRO/.test(m)) return B+'buy-mac/mac-pro';
+  if(/IMAC/.test(m)) return B+'buy-mac/imac';
+  if(/MACBOOK/.test(m)) return B+'buy-mac/macbook-air';
+  return B+'mac';   // 對不到 → Mac 總覽頁
+}
+
+// 只回傳與基本機型「不同」的規格行；base 缺資料/比不出時保險納入
+function diffSpecs(base, fullSpecs){
+  const lines=[];
+  (fullSpecs||[]).forEach(sp=>{
+    const text=sp.text||'', cat=sp.cat||'other';
+    let same=false;
+    if(base){
+      switch(cat){
+        case 'memory':  same = memNorm(text) && memNorm(text)===memNorm(base.memory); break;
+        case 'storage': same = stoNorm(text) && stoNorm(text)===stoNorm(base.storage); break;
+        case 'color':   same = base.color && text.indexOf(base.color)>-1; break;
+        case 'chip':    same = base.chip && text.toUpperCase().indexOf(base.chip.toUpperCase())>-1; break;
+        case 'size':    same = base.size && text.indexOf(base.size)>-1; break;
+        case 'cores': {
+          const cg=text.match(/(\d+)\s*核心\s*CPU/), gg=text.match(/(\d+)\s*核心\s*GPU/);
+          const cpuOk = !base.cpu || (cg && cg[1]===String(base.cpu));
+          const gpuOk = !base.gpu || (gg && gg[1]===String(base.gpu));
+          same = cpuOk && gpuOk; break;
+        }
+        default: same=false;   // display/software/other → 一律列出
+      }
+    }
+    if(!same){ const l=CAT_LABEL[cat]; lines.push((l?l+'：':'')+text); }
+  });
+  return lines.join('\n');
+}
+
+// 「前往 Apple 配置」按鈕
+function goToApple(btn){
+  const block=btn.closest('.item-block');
+  const f=block.querySelector('.item-fields');
+  const stk=(f.querySelector('[name="stk"]')||{}).value?.trim()||'';
+  const pname=(f.querySelector('[name="pname"]')||{}).value?.trim()||'';
+  if(!pname){ alert('請先填「原產品名稱」（含基本規格簡稱），再前往 Apple 配置。'); return; }
+  window.name='studioa_cto_form';        // 讓書籤能用名稱認回「這個」分頁（不另開新分頁）
+  window._launchedCtoBlock=block;         // 記住要回填的這一筆 CTO
+  const baseSpecs=parseBaseName(pname);
+  try { localStorage.setItem(CTO_BASE_KEY, JSON.stringify({stk, pname, baseSpecs, ts:Date.now()})); } catch(e){}
+  const url=modelToAppleUrl(baseSpecs.model);
+  window.open(url, '_blank');
+}
+
+// ── CTO 書籤接收端 ──────────────────────────────────────────────
+// 兩種來源都呼叫 applyCtoData()：
+//   (1) 書籤直接 postMessage 給 opener（原表單分頁）→ 最可靠，不另開分頁
+//   (2) 後備：書籤用 #cto= 開/重用本頁（load 或 hashchange 時觸發）
+function initCtoFromHash() {
+  if (!location.hash.startsWith('#cto=')) return;
+  let data;
+  try { data = JSON.parse(decodeURIComponent(location.hash.slice(5))); }
+  catch (e) { alert('CTO 自動帶入失敗：資料格式錯誤，請改用手動填寫。'); return; }
+  history.replaceState(null, '', location.pathname + location.search);
+  applyCtoData(data);
+}
+
+// 接收書籤從 Apple 分頁 postMessage 過來的資料（opener = 本表單分頁）
+window.addEventListener('message', function (e) {
+  const d = e.data;
+  if (d && typeof d === 'object' && d.__studioa_cto) { try { applyCtoData(d.__studioa_cto); } catch(err){} }
+});
+
+function applyCtoData(data) {
+  // 取回「前往 Apple 配置」時暫存的基本機型（2 小時內有效）
+  let baseRec=null;
+  try { const r=JSON.parse(localStorage.getItem(CTO_BASE_KEY)||'null');
+        if(r && Date.now()-r.ts < 2*3600*1000) baseRec=r; } catch(e){}
+  try { localStorage.removeItem(CTO_BASE_KEY); } catch(e){}
+
+  // 同分頁重用：若是從「前往配置」那一筆回來，就填回那筆；否則新增一筆
+  let block;
+  const launched = window._launchedCtoBlock;
+  if (launched && document.body.contains(launched)) {
+    block = launched; window._launchedCtoBlock = null;
+    if (block.dataset.type !== 'cto') setItemType(block.dataset.id, 'cto', block.querySelectorAll('.type-tab')[2]);
+  } else {
+    addItem();
+    block = document.querySelectorAll('.item-block')[document.querySelectorAll('.item-block').length - 1];
+    setItemType(block.dataset.id, 'cto', block.querySelectorAll('.type-tab')[2]);
+  }
+
+  const f = block.querySelector('.item-fields');
+  const setVal = (name, val) => { const el = f.querySelector(`[name="${name}"]`); if (el && val) el.value = val; };
+
+  window._lastCtoBlock = block;   // 供截圖 postMessage 對應這一筆
+
+  // 規格：有 fullSpecs 走差異；否則相容 v1 的 specs 字串
+  let specsText;
+  if (Array.isArray(data.fullSpecs)) {
+    specsText = diffSpecs(baseRec ? baseRec.baseSpecs : null, data.fullSpecs);
+  } else { specsText = data.specs || ''; }
+
+  setVal('stk',      baseRec ? baseRec.stk : '');
+  setVal('pname',    baseRec ? baseRec.pname : data.pname);
+  setVal('price',    data.oldprice);                 // 原價 = 起價
+  setVal('newprice', data.newprice);
+  setVal('specs',    specsText);
+  setVal('url',      data.bagUrl || data.url);
+
+  if (f.querySelector('[name="stk"]')) validateStk(f.querySelector('[name="stk"]'));
+  block.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+  // 依購物袋明細自動畫規格卡 → 規格截圖（用於訂購單 PDF）
+  if (data.detail) { renderSpecCard(block, data).catch(()=>{}); }
+
+  const miss=[]; if(!(baseRec&&baseRec.stk)) miss.push('原存貨代碼'); if(!data.oldprice) miss.push('原價');
+  alert('✅ 已自動帶入 Apple 規格'
+      + (Array.isArray(data.fullSpecs)&&baseRec ? '（客製規格只列出與基本機型不同的項目）' : '')
+      + '。\n\n🖼 規格明細卡會自動產生（用於訂購單 PDF）。\n'
+      + (data.extraCount ? '🧹 購物袋原有其他 '+data.extraCount+' 筆，已自動移除（只留這筆）。\n' : '')
+      + (miss.length? '✍️ 請補上：'+miss.join('、')+'。\n' : '')
+      + '填好客戶姓名/電話/發票後，可按「下載訂購單 PDF」。');
+}
+
+// ════════════════════════════════════════════════════════════════
+//  規格明細卡（重繪成圖）+ 訂購單 PDF
+// ════════════════════════════════════════════════════════════════
+function escapeHtml(s){ return (s||'').replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+
+// 依購物袋帶回的明細，畫一張 Apple 風格規格卡 → 轉成圖存到該筆（給截圖/PDF 用）
+async function renderSpecCard(block, data){
+  if(!window.html2canvas) return;
+  const d = data.detail || {};
+  const liHtml = t => `<li><span style="color:#86868b;margin-right:8px">•</span>${escapeHtml(t)}</li>`;
+  document.getElementById('sc-name').textContent  = data.pname || '';
+  document.getElementById('sc-price').textContent = d.price || (data.newprice ? 'NT$'+Number(data.newprice).toLocaleString() : '');
+  document.getElementById('sc-hw').innerHTML = (d.hardware||[]).map(liHtml).join('');
+  const sw = d.software||[];
+  document.getElementById('sc-sw').innerHTML = sw.map(liHtml).join('');
+  document.getElementById('sc-sw-head').style.display = sw.length ? 'block':'none';
+
+  // 產品圖（Apple CDN，嘗試 CORS；失敗則不放圖）
+  const img = document.getElementById('sc-img');
+  img.style.display = 'none';
+  if(d.img){
+    const ok = await new Promise(res=>{ img.onload=()=>res(true); img.onerror=()=>res(false); img.src=d.img; });
+    img.style.display = ok ? 'block':'none';
+  }
+
+  const card = document.getElementById('specCard');
+  let url='';
+  try {
+    const c = await html2canvas(card, {scale:2, backgroundColor:'#fff', useCORS:true, logging:false});
+    url = c.toDataURL('image/jpeg', 0.92);
+  } catch(e){                         // 圖片跨來源 taint → 不放圖重畫
+    img.style.display='none';
+    const c2 = await html2canvas(card, {scale:2, backgroundColor:'#fff', logging:false});
+    url = c2.toDataURL('image/jpeg', 0.92);
+  }
+  setShot(block, url);
+}
+
+function setShot(block, dataUrl){
+  block._shot=dataUrl;
+  const wrap=block.querySelector('.cto-shot-wrap');
+  const img=block.querySelector('.cto-shot-img');
+  if(img) img.src=dataUrl;
+  if(wrap) wrap.style.display='block';
+}
+
+function manualShot(input){
+  const file=input.files && input.files[0]; if(!file) return;
+  const block=input.closest('.item-block');
+  const r=new FileReader();
+  r.onload=()=>setShot(block, r.result);
+  r.readAsDataURL(file);
+}
+
+function downloadShot(btn){
+  const block=btn.closest('.item-block');
+  if(!block._shot){ alert('還沒有規格截圖。請用書籤帶入，或手動上傳一張。'); return; }
+  const a=document.createElement('a');
+  a.href=block._shot; a.download='CTO規格截圖.png'; a.click();
+}
+
+function copyBookmarklet(btn){
+  // 用 getAttribute 取「原始未編碼」的碼（.href 會被瀏覽器 %編碼，貼上後會壞）
+  const el=document.getElementById('ctoBookmarklet');
+  const code=el? el.getAttribute('href') : '';
+  if(!code || !code.startsWith('javascript:')){ alert('書籤碼尚未就緒，請重新整理頁面再試。'); return; }
+  navigator.clipboard.writeText(code).then(()=>{
+    alert('✅ 已複製書籤程式碼。\n\n安裝：在書籤列空白處按右鍵 →「加入網頁…」→ 名稱填「STUDIO A｜Apple規格擷取」→ 網址貼上 → 儲存。\n\n（若已有舊的同名書籤，請先刪除再貼上新的。）');
+  }).catch(()=>{
+    // 後備：用 prompt 讓使用者手動複製
+    window.prompt('請手動複製以下整段（⌘C），到書籤列右鍵「加入網頁」貼到網址欄：', code);
+  });
+}
+
+async function downloadOrderPdf(btn){
+  const block=btn.closest('.item-block');
+  const f=block.querySelector('.item-fields');
+  const g=n=>{ const el=f.querySelector(`[name="${n}"]`); return el? el.value.trim():''; };
+  const store=document.getElementById('store').value || '—';
+  const d=new Date();
+  const dateStr=`${d.getFullYear()}/${String(d.getMonth()+1).padStart(2,'0')}/${String(d.getDate()).padStart(2,'0')}`;
+
+  // 填入 PDF 範本
+  document.getElementById('pf-store').textContent   = store;
+  document.getElementById('pf-name').textContent    = g('custname');
+  document.getElementById('pf-date').textContent    = dateStr;
+  document.getElementById('pf-phone').textContent   = g('custphone');
+  document.getElementById('pf-model').textContent   = g('pname');
+  document.getElementById('pf-total').textContent   = g('newprice') ? 'NT$'+Number(g('newprice')).toLocaleString() : '';
+  document.getElementById('pf-invoice').textContent = g('invoice');
+  const shotImg=document.getElementById('pf-shot'), shotEmpty=document.getElementById('pf-shot-empty');
+  if(block._shot){ shotImg.src=block._shot; shotImg.style.display='inline-block'; shotEmpty.style.display='none'; }
+  else { shotImg.style.display='none'; shotEmpty.style.display='inline'; }
+
+  if(!window.html2canvas || !(window.jspdf && window.jspdf.jsPDF)){
+    alert('PDF 函式庫尚未載入完成，請稍候再試一次（需要網路）。'); return;
+  }
+  const tpl=document.getElementById('pdfTemplate');
+  // 等截圖圖片載入完成再轉檔
+  if(block._shot){ await new Promise(res=>{ if(shotImg.complete) res(); else { shotImg.onload=res; shotImg.onerror=res; } }); }
+
+  const canvas=await html2canvas(tpl, {scale:2, backgroundColor:'#fff', useCORS:true});
+  const imgData=canvas.toDataURL('image/jpeg', 0.92);
+  const { jsPDF }=window.jspdf;
+  const pdf=new jsPDF('p','mm','a4');
+  const pw=pdf.internal.pageSize.getWidth(), ph=pdf.internal.pageSize.getHeight();
+  let w=pw, h=canvas.height*pw/canvas.width;
+  if(h>ph){ h=ph; w=canvas.width*ph/canvas.height; }       // 過高則以高度為準置中
+  pdf.addImage(imgData, 'JPEG', (pw-w)/2, 0, w, h);
+  const nm=g('custname') ? ('CTO訂購單_'+g('custname')) : 'CTO訂購單';
+  pdf.save(nm+'.pdf');
+}
+
+// ── 安裝書籤連結：讀取上方 text/plain 區塊的書籤碼掛到 href ──────────
+(function setupBookmarklet() {
+  const src = document.getElementById('ctoBmSrc');
+  const link = document.getElementById('ctoBookmarklet');
+  if (src && link) {
+    // 書籤回傳目標 = 目前這個表單頁的網址（localhost 或正式 Pages 皆自動對應）
+    link.href = src.textContent.trim().replace('__FORM_URL__', location.origin + location.pathname);
+    link.addEventListener('click', function (e) {
+      e.preventDefault();
+      alert('請用「拖曳」把這個連結拉到瀏覽器書籤列，不要直接點。\n安裝後到 Apple 台灣官網把規格配置好，再按它。');
+    });
+  }
+})();
+
+// 書籤用名稱重用本分頁時，是 hash 變更（不重載）→ 需監聽 hashchange 觸發回填
+window.addEventListener('hashchange', function () {
+  if (location.hash.startsWith('#cto=')) initCtoFromHash();
+});
+
+// 預設加一筆 / 或從書籤帶入 CTO
+if (location.hash.startsWith('#cto=')) {
+  initCtoFromHash();
+} else {
+  addItem();
+}
+</script>
+</body>
+</html>
