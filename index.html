@@ -276,19 +276,27 @@ textarea { min-height: 70px; resize: vertical; }
         </div>
       </div>
 
-      <!-- ── Apple 規格讀取書籤說明 ── -->
-      <div class="guide-section">
-        <h3>📌 Apple 規格讀取書籤</h3>
+      <!-- ── Apple 規格擷取 Chrome 擴充說明 ── -->
+      <div class="guide-section" style="border:2px solid #0071e3;border-radius:12px;padding:14px;background:#f5faff">
+        <h3 style="margin-top:0">🧩 Apple 規格擷取 Chrome 擴充</h3>
+        <p style="font-size:13px;line-height:1.8;margin:6px 0">
+          在 Apple 購物袋頁右下角會自動出現按鈕，一鍵把客製規格與產品圖帶回本表單。僅支援 Chrome。
+        </p>
 
         <!-- 安裝 -->
         <div style="margin-bottom:12px">
-          <strong>安裝（每人一次）</strong><br>
-          將下方連結<strong>拖曳到瀏覽器書籤列</strong>即完成安裝：<br>
-          <a id="ctoBookmarklet" href="#"
-             style="display:inline-block;margin:8px 0 4px;background:#0071e3;color:#fff;font-weight:700;
-                    padding:7px 16px;border-radius:8px;text-decoration:none;cursor:grab"
-             title="拖我到書籤列，不要點">📌 Apple規格讀取</a><br>
-          <span style="font-size:11px;color:#6e6e73">拖曳是「新增」不是取代。更新書籤時請先刪除書籤列上舊的同名書籤，再重新拖曳。</span>
+          <strong>安裝（每台一次）</strong>
+          <div style="margin:8px 0">
+            <a href="cto-extension.zip" download
+               style="display:inline-block;background:#0071e3;color:#fff;font-weight:700;
+                      padding:9px 18px;border-radius:980px;text-decoration:none;font-size:14px">⬇️ 下載擴充（ZIP）</a>
+          </div>
+          <ol style="margin:6px 0 0 16px;padding:0;font-size:13px;line-height:1.9">
+            <li>按「<strong>⬇️ 下載擴充</strong>」→ <strong>解壓縮</strong>，得到 <code>cto-extension</code> 資料夾</li>
+            <li>網址列輸入 <code>chrome://extensions</code> → 右上角開啟「<strong>開發人員模式</strong>」</li>
+            <li>按「<strong>載入未封裝項目</strong>」→ 選剛解壓出的 <code>cto-extension</code> 資料夾</li>
+          </ol>
+          <span style="font-size:11px;color:#6e6e73">更新版本：重新下載 ZIP、解壓覆蓋同資料夾，再到 <code>chrome://extensions</code> 按該擴充的「重新整理」。資料夾請固定位置、勿移動或刪除。</span>
         </div>
 
         <!-- CTO -->
@@ -297,7 +305,7 @@ textarea { min-height: 70px; resize: vertical; }
           <ol style="margin:6px 0 0 16px;padding:0;font-size:13px;line-height:2">
             <li>選 <strong>CTO</strong> 類型，填入原存貨代碼與原產品名稱，按 <strong>🍎 前往 Apple 配置</strong></li>
             <li>在 Apple 官網自行選好客製規格，按「加入購物袋」</li>
-            <li>到 Apple <strong>購物袋頁</strong>，按一次 <strong>Apple規格讀取</strong> 書籤</li>
+            <li>到 Apple <strong>購物袋頁</strong>，按右下角 <strong>📋 擷取規格到訂購單</strong> 按鈕</li>
             <li>表單自動帶入機型／規格（只列與基本機型不同處）／客製後價格</li>
             <li>填入客戶姓名、電話、發票 → <strong>📄 下載訂購單 PDF</strong></li>
           </ol>
@@ -310,7 +318,7 @@ textarea { min-height: 70px; resize: vertical; }
           <ol style="margin:6px 0 0 16px;padding:0;font-size:13px;line-height:2">
             <li>選 <strong>高容量/CEL</strong> 類型，填入商品名稱（建議含料號，如 <code style="font-size:11px">MH9P4TA/A IPAD AIR 13 WF CL 512GB STL-TWN</code>）</li>
             <li>按 <strong>🍎 前往 Apple iPad 頁</strong>，在 Apple 官網選好規格後按「加入購物袋」</li>
-            <li>到 Apple <strong>購物袋頁</strong>，按一次 <strong>Apple規格讀取</strong> 書籤</li>
+            <li>到 Apple <strong>購物袋頁</strong>，按右下角 <strong>📋 擷取規格到訂購單</strong> 按鈕</li>
             <li>表單自動帶入商品名稱與售價，並產生規格截圖</li>
             <li>填入客戶姓名、電話、發票 → <strong>📄 下載訂購單 PDF</strong></li>
           </ol>
@@ -449,13 +457,13 @@ textarea { min-height: 70px; resize: vertical; }
   </div>
   <div class="form-group">
     <button type="button" class="btn" onclick="goToAppleCel(this)"
-            style="background:#0071e3;color:#fff;padding:11px">🍎 前往 Apple iPad 頁（選好規格後用書籤帶回）</button>
-    <p class="hint">到 Apple 官網選好 iPad 規格並加入購物袋後，按書籤帶回售價與規格截圖。</p>
+            style="background:#0071e3;color:#fff;padding:11px">🍎 前往 Apple iPad 頁（選好規格後用擴充帶回）</button>
+    <p class="hint">到 Apple 官網選好 iPad 規格並加入購物袋後，在購物袋頁按擴充的「📋 擷取規格到訂購單」帶回售價與規格截圖。</p>
   </div>
   <div class="form-group">
     <label>售價</label>
     <input type="text" name="newprice" placeholder="例：55900">
-    <p class="hint">書籤帶入後可手動修改</p>
+    <p class="hint">擴充帶入後可手動修改</p>
   </div>
   <!-- ── 訂購單 PDF 資訊 ── -->
   <div class="form-group" style="border-top:1px dashed #0071e3;padding-top:14px;margin-top:6px">
@@ -466,7 +474,7 @@ textarea { min-height: 70px; resize: vertical; }
     </div>
     <input type="text" name="invoice" placeholder="發票號碼" style="margin-top:10px">
     <div class="cto-shot-wrap" style="margin-top:10px;display:none">
-      <div style="font-size:12px;color:#6e6e73;margin-bottom:4px">規格截圖（書籤自動帶入）：</div>
+      <div style="font-size:12px;color:#6e6e73;margin-bottom:4px">規格截圖（擴充自動帶入）：</div>
       <img class="cto-shot-img" style="max-width:100%;border:1px solid #d1d1d6;border-radius:8px">
     </div>
     <label style="font-weight:400;font-size:12px;color:#6e6e73;margin-top:8px">
@@ -494,7 +502,7 @@ textarea { min-height: 70px; resize: vertical; }
   <div class="form-group">
     <button type="button" class="btn" onclick="goToApple(this)"
             style="background:#ff2d55;color:#fff;padding:11px">🍎 前往 Apple 配置（會記住此基本機型）</button>
-    <p class="hint">填好上面兩欄後按此 → 自動開啟對應機型的 Apple 台灣頁。配置完用書籤帶回，規格只會列出與此基本機型不同的項目。</p>
+    <p class="hint">填好上面兩欄後按此 → 自動開啟對應機型的 Apple 台灣頁。配置完在購物袋頁按擴充帶回，規格只會列出與此基本機型不同的項目。</p>
   </div>
   <div class="row2">
     <div class="form-group">
@@ -534,7 +542,7 @@ textarea { min-height: 70px; resize: vertical; }
     </div>
     <input type="text" name="invoice" placeholder="發票號碼" style="margin-top:10px">
     <div class="cto-shot-wrap" style="margin-top:10px;display:none">
-      <div style="font-size:12px;color:#6e6e73;margin-bottom:4px">規格截圖（書籤自動帶入）：</div>
+      <div style="font-size:12px;color:#6e6e73;margin-bottom:4px">規格截圖（擴充自動帶入）：</div>
       <img class="cto-shot-img" style="max-width:100%;border:1px solid #d1d1d6;border-radius:8px">
     </div>
     <label style="font-weight:400;font-size:12px;color:#6e6e73;margin-top:8px">
@@ -546,10 +554,6 @@ textarea { min-height: 70px; resize: vertical; }
     </div>
   </div>
 </template>
-
-<!-- CTO 書籤原始碼（單行、未執行；由 setupBookmarklet 讀取掛到連結 href）。
-     與 cto-bookmarklet.js 內容一致。改 FORM_URL 即可換回正式頁。 -->
-<script type="text/plain" id="ctoBmSrc">javascript:(function(){var F='__FORM_URL__';function cl(s){return(s||'').replace(/\s+/g,' ').trim();}function bag(){return /\/shop\/bag/.test(location.pathname);}if(!bag()){alert('請到 Apple 購物袋頁面（apple.com/tw/shop/bag）再按一次書籤。');return;}function ms(h){if(/MacBook\s*Pro/i.test(h))return 'macbook-pro';if(/MacBook\s*Air/i.test(h))return 'macbook-air';if(/Mac\s*Studio/i.test(h))return 'mac-studio';if(/Mac\s*mini/i.test(h))return 'mac-mini';if(/Mac\s*Pro/i.test(h))return 'mac-pro';if(/iMac/i.test(h))return 'imac';return '';}function ic(it){var c='';[].slice.call(it.querySelectorAll('[data-evar1]')).some(function(e){var parts=(e.getAttribute('data-evar1')||'').split('||');var v=(parts[1]||'').trim();if(/^[A-Z0-9][A-Z0-9\/.\-]{2,}$/i.test(v)){c=v;return true;}return false;});return c;}function sb(item){var head=cl((item.querySelector('[data-autom="bag-item-name"]')||{}).textContent||'');var sp=[];var mc=head.match(/^(\S+?)\s*\d+\s*吋/);if(mc)sp.push({cat:'color',text:mc[1]});var msz=head.match(/(\d+)\s*吋/);if(msz)sp.push({cat:'size',text:msz[1]+' 吋'});var mh=head.match(/配備\s*(.+?)\s*晶片/);if(mh)sp.push({cat:'chip',text:cl(mh[1])});var hw=item.querySelector('ul.list, ul[class*="list"]');if(hw){[].slice.call(hw.querySelectorAll('li')).forEach(function(li){var t=cl(li.textContent);if(/核心\s*CPU/.test(t))sp.push({cat:'cores',text:t.split('、').filter(function(x){return /CPU|GPU/.test(x);}).join('、')});else if(/記憶體/.test(t)){var m=t.match(/\d+\s*GB/);sp.push({cat:'memory',text:m?m[0]:t});}else if(/SSD|儲存/.test(t)){var s2=t.match(/\d+\s*(TB|GB)/);sp.push({cat:'storage',text:s2?s2[0]:t});}else if(/顯示器/.test(t)&&!/外接|支援|埠/.test(t))sp.push({cat:'display',text:t});else if(/電源轉接器|電源供應器/.test(t))sp.push({cat:'power',text:t});else if(/鍵盤|Keyboard/.test(t))sp.push({cat:'keyboard',text:t});});}var p=cl((item.querySelector('[data-autom="Monthly_price"]')||{}).textContent||'').match(/NT\$[\d,]+/);var code=ic(item);var slug=ms(head);var purl=(code&&slug)?'https://www.apple.com/tw/shop/buy-mac/'+slug+'?product='+code+'&step=attach':'';var lists=item.querySelectorAll('ul.list, ul[class*="list"]');function lt(ul){return ul?[].slice.call(ul.querySelectorAll('li')).map(function(li){return cl(li.textContent);}).filter(Boolean):[];}var im=item.querySelector('img');var detail={hardware:lt(lists[0]),software:lt(lists[1]),img:im?(im.currentSrc||im.src||''):'',price:p?p[0]:''};return {pname:head,fullSpecs:sp,newprice:p?p[0].replace(/[^\d]/g,''):'',productUrl:purl,detail:detail};}function gi(){return [].slice.call(document.querySelectorAll('[data-autom^="bag-item-"]')).filter(function(e){return /^bag-item-\d+$/.test(e.getAttribute('data-autom'));});}var W=function(t){return new Promise(function(r){setTimeout(r,t);});};var items=gi();if(!items.length){alert('購物袋是空的，或讀不到商品。請確認已加入購物袋。');return;}var keep=items[0];var data=sb(keep);data.bagUrl=data.productUrl||location.href;if(items.length>1)data.extraCount=items.length-1;var kc=ic(keep);var delivered=false;if(window.opener&&!window.opener.closed){try{window.opener.postMessage({__studioa_cto:data},'*');delivered=true;}catch(e){}}if(!delivered){var url=F+String.fromCharCode(35)+'cto='+encodeURIComponent(JSON.stringify(data));var w=window.open(url,'studioa_cto_form');if(w)delivered=true;else location.href=url;}if(delivered){try{window.open('','studioa_cto_form');}catch(e){}}if(items.length>1&&delivered){(async function(){for(var g=0;g<12;g++){var cur=gi();if(cur.length<=1)break;var victim=null;for(var i=0;i<cur.length;i++){if(ic(cur[i])!==kc){victim=cur[i];break;}}if(!victim)break;var rm=victim.querySelector('[data-autom="bag-item-remove-button"]');if(!rm)break;rm.click();await W(900);}})();}})();</script>
 
 <!-- PDF / 截圖用函式庫 -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -1072,22 +1076,9 @@ function manualShot(input){
 
 function downloadShot(btn){
   const block=btn.closest('.item-block');
-  if(!block._shot){ alert('還沒有規格截圖。請用書籤帶入，或手動上傳一張。'); return; }
+  if(!block._shot){ alert('還沒有規格截圖。請用擴充帶入，或手動上傳一張。'); return; }
   const a=document.createElement('a');
   a.href=block._shot; a.download='CTO規格截圖.png'; a.click();
-}
-
-function copyBookmarklet(btn){
-  // 用 getAttribute 取「原始未編碼」的碼（.href 會被瀏覽器 %編碼，貼上後會壞）
-  const el=document.getElementById('ctoBookmarklet');
-  const code=el? el.getAttribute('href') : '';
-  if(!code || !code.startsWith('javascript:')){ alert('書籤碼尚未就緒，請重新整理頁面再試。'); return; }
-  navigator.clipboard.writeText(code).then(()=>{
-    alert('✅ 已複製書籤程式碼。\n\n安裝：在書籤列空白處按右鍵 →「加入網頁…」→ 名稱填「STUDIO A｜Apple規格擷取」→ 網址貼上 → 儲存。\n\n（若已有舊的同名書籤，請先刪除再貼上新的。）');
-  }).catch(()=>{
-    // 後備：用 prompt 讓使用者手動複製
-    window.prompt('請手動複製以下整段（⌘C），到書籤列右鍵「加入網頁」貼到網址欄：', code);
-  });
 }
 
 async function downloadOrderPdf(btn){
@@ -1130,21 +1121,7 @@ async function downloadOrderPdf(btn){
   pdf.save(nm+'.pdf');
 }
 
-// ── 安裝書籤連結：讀取上方 text/plain 區塊的書籤碼掛到 href ──────────
-(function setupBookmarklet() {
-  const src = document.getElementById('ctoBmSrc');
-  const link = document.getElementById('ctoBookmarklet');
-  if (src && link) {
-    // 書籤回傳目標 = 目前這個表單頁的網址（localhost 或正式 Pages 皆自動對應）
-    link.href = src.textContent.trim().replace('__FORM_URL__', location.origin + location.pathname);
-    link.addEventListener('click', function (e) {
-      e.preventDefault();
-      alert('請用「拖曳」把這個連結拉到瀏覽器書籤列，不要直接點。\n安裝後到 Apple 台灣官網把規格配置好，再按它。');
-    });
-  }
-})();
-
-// 書籤用名稱重用本分頁時，是 hash 變更（不重載）→ 需監聽 hashchange 觸發回填
+// 擴充用名稱重用本分頁時，是 hash 變更（不重載）→ 需監聽 hashchange 觸發回填
 window.addEventListener('hashchange', function () {
   if (location.hash.startsWith('#cto=')) initCtoFromHash();
 });
