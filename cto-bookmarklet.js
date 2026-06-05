@@ -28,8 +28,7 @@
   function isBagPage() { return /\/shop\/bag/.test(location.pathname); }
 
   if (!isBagPage()) {
-    alert('請先自己在 Apple 完成：①點選客製規格 ②截圖訂製總覽 ③加入購物袋，\n'
-        + '然後到「購物袋」頁面，再按一次本書籤即可帶回表單。');
+    alert('請到 Apple 購物袋頁面（apple.com/tw/shop/bag）再按一次書籤。');
     return;
   }
 
