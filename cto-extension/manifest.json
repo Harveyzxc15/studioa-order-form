@@ -1,0 +1,32 @@
+{
+  "manifest_version": 3,
+  "name": "STUDIO A｜Apple 規格擷取",
+  "version": "1.0.0",
+  "description": "在 Apple 台灣官網購物袋頁一鍵擷取 Mac 客製規格與產品圖，自動帶回 STUDIO A 訂購單表單。",
+  "permissions": ["tabs"],
+  "host_permissions": [
+    "https://www.apple.com/tw/*",
+    "https://*.apple.com/*",
+    "https://*.cdn-apple.com/*",
+    "https://harveyzxc15.github.io/*",
+    "http://localhost/*",
+    "http://127.0.0.1/*"
+  ],
+  "background": { "service_worker": "background.js" },
+  "content_scripts": [
+    {
+      "matches": ["https://www.apple.com/tw/shop/bag*"],
+      "js": ["scrape.js", "content-apple-bag.js"],
+      "run_at": "document_idle"
+    },
+    {
+      "matches": [
+        "https://harveyzxc15.github.io/studioa-order-form/*",
+        "http://localhost/*",
+        "http://127.0.0.1/*"
+      ],
+      "js": ["content-form.js"],
+      "run_at": "document_idle"
+    }
+  ]
+}
