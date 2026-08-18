@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-08-18 13:39",
+  "updated_at": "2026-08-18 15:39",
   "orders": [
     {
       "id": 173,
@@ -24,10 +24,10 @@
       "stk_id": "07313124",
       "product_name": "MGE44TA/A MBP 16/M5 Pro/SL/18C/20C GPU/24GB/1T-TWN",
       "qty": 1,
-      "status": "shipped",
+      "status": "arrived",
       "wait_days": null,
       "confirmed_at": null,
-      "arrived_at": null,
+      "arrived_at": "2026-08-18",
       "reply": "貨到寄出～",
       "reply_date": "2026-06-08"
     },
